@@ -1,32 +1,22 @@
 ---
-# Display name
-title: Alice Bighetti 吳恩達
-
-# Full name (for SEO)
-first_name: Alice
-last_name: Bighetti
-
-# Is this the primary user of the site?
-superuser: true
-
-# Role/position/tagline
-role: Professor of Artificial Intelligence
-
-# Organizations/Affiliations to show in About widget
+avatar_filename: profile.jpeg
+bio: ""
+interests: []
+social:
+  - display:
+      header: false
+    link: /#Contact
+    icon_pack: fab
+    icon: envelop
+  - icon: github
+    icon_pack: fab
+    link: https://github.com/yyimingucl
+  - icon: linkedin
+    icon_pack: fab
+    link: https://www.linkedin.com/
 organizations:
   - name: Stanford University
     url: https://www.stanford.edu/
-
-# Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
-
-# Interests to show in About widget
-interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
-
-# Education to show in About widget
 education:
   courses:
     - course: PhD in Artificial Intelligence
@@ -38,47 +28,20 @@ education:
     - course: BSc in Artificial Intelligence
       institution: Massachusetts Institute of Technology
       year: 2008
-
-# Social/Academic Networking
-# For available icons, see: https://wowchemy.com/docs/getting-started/page-builder/#icons
-#   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
-#   form "mailto:your-email@example.com" or "/#contact" for contact widget.
-social:
-  - icon: envelope
-    icon_pack: fas
-    link: '/#contact'
-  - icon: twitter
-    icon_pack: fab
-    link: https://twitter.com/GeorgeCushen
-    label: Follow me on Twitter
-    display:
-      header: true
-  - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
-    icon_pack: fas
-    link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
-  - icon: github
-    icon_pack: fab
-    link: https://github.com/gcushen
-  - icon: linkedin
-    icon_pack: fab
-    link: https://www.linkedin.com/
-
-# Link to a PDF of your resume/CV.
-# To use: copy your resume to `static/uploads/resume.pdf`, enable `ai` icons in `params.yaml`,
-# and uncomment the lines below.
-# - icon: cv
-#   icon_pack: ai
-#   link: uploads/resume.pdf
-
-# Enter email to display Gravatar (if Gravatar enabled in Config)
-email: ''
-
-# Highlight the author in author lists? (true/false)
+superuser: true
+last_name: Bighetti
+role: PhD Student in Statistical Science and Advanced Computing
 highlight_name: true
+title: Yiming Yang
+first_name: Alice
+email: ""
 ---
+Hi there, welcome to my personal website. My name is Yiming Yang. I am a first-year PhD student in Statistical Science and Advanced Computing at [Department of Statistical Science, University College London (UCL)](https://www.ucl.ac.uk/statistics/), where I am supervised by [Prof. Serge Guillas](https://www.ucl.ac.uk/statistics/people/sergeguillas). Prior to my current role, I completed my Master program MSc Computational Statiscs and Machine Learning from the Department of Computer Science, UCL. I obtained Bachelor's degree in Mathematics and Statiscs at the Department of Mathematics, UCL. 
 
-Alice Bighetti is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+My research mainly aims at developing new methods to quantify uncertainties in exascale (1 exaFLOP is 10^18 floating point operation per second) simulation models by Statistical Methods and Machine Learning. In partcular, I am working on the Uncertainty Quantification (UQ) of exascale nuclear fusion simulation which is involved in two projects: [SEAVEA (Software Environment for Actionable & VVUQ-evaluated Exascale Applications) ](https://www.seavea-project.org/)and AQUIFER (Advanced Quantification of Uncertainties In Fusion modelling at the Exascale with model order Reducation).
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+Currently, I am researching the methodolgies and applications of Linked Gaussian Process (GP) for emulating large-scale coupled physcial simulation with high-dimensional intermediate variables. The emulation will siginificately accelerate the discovery of physcial domain which help better understand the underlying principles and play an important role in the downstream statistical tasks (UQ, Sensitivity Analysis, and so on).
+
+My main research topic is uncertainty quantification for exscale tokamak nuclear simulation, which covers many areas like sensivity analysis, stochastic modelling, computational fluid dynamics, and etc. Currently, I focus on the surrogate modelling for some exscale simulation codes for tokamak nuclear fusion including gaussian process, polynomial regression, and neural networks. Apart from my PhD research, I am also interested in general machine learning tasks, like computer vision and reinforcement learning.
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
