@@ -13,27 +13,27 @@ social:
     link: https://github.com/yyimingucl
   - icon: linkedin
     icon_pack: fab
-    link: https://www.linkedin.com/
+    link: https://www.linkedin.com/in/yiming-yang-b87b72193/
 organizations:
-  - name: Stanford University
-    url: https://www.stanford.edu/
+  - name: University College London
+    url: https://www.ucl.ac.uk/
 education:
   courses:
-    - course: PhD in Artificial Intelligence
-      institution: Stanford University
-      year: 2012
-    - course: MEng in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2009
-    - course: BSc in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2008
+    - course: PhD in Statistical Science and Advanced Computing
+      institution: University College London
+      year: April 2022
+    - course: MSc in Computational Statistics and Machine Learning
+      institution: University College London
+      year: 2020
+    - course: BSc in Mathematics and Statistics
+      institution: University College London
+      year: 2017
 superuser: true
-last_name: Bighetti
+last_name: Yang
 role: PhD Student in Statistical Science and Advanced Computing
 highlight_name: true
 title: Yiming Yang
-first_name: Alice
+first_name: Yiming
 email: ""
 ---
 Hi there, welcome to my personal website. My name is Yiming Yang. I am a first-year PhD student in Statistical Science and Advanced Computing at [Department of Statistical Science, University College London (UCL)](https://www.ucl.ac.uk/statistics/), where I am supervised by [Prof. Serge Guillas](https://www.ucl.ac.uk/statistics/people/sergeguillas). Prior to my current role, I completed my Master program MSc Computational Statiscs and Machine Learning from the Department of Computer Science, UCL. I obtained Bachelor's degree in Mathematics and Statiscs at the Department of Mathematics, UCL. 
