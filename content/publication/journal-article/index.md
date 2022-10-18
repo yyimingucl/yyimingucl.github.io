@@ -31,7 +31,7 @@ sufficiently well to even cope with these complex domain shifts. Surprisingly, t
 # - Source Themes
 # featured: false
 
-# links:
+links:
 # - name: ""
 #   url: ""
 url_pdf: https://proceedings.mlr.press/v176/eichenberger22a/eichenberger22a.pdf
