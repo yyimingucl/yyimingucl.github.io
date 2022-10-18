@@ -9,7 +9,7 @@ interests:
 social:
   - display:
       header: false
-  - icon: envelop
+  - icon: envelope
     icon_pack: fab
     link: '/#contact'
   - icon: github
