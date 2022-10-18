@@ -34,7 +34,7 @@ experience:
   - title: Senior Research Assistant
     company: Edinburgh Napier University 
     company_url: 'https://www.napier.ac.uk/'
-    company_logo: org-x
+    company_logo: ENU_logo
     location: Edinburgh, UK
     date_start: '2022-03-27'
     date_end: '2022-09-27'
@@ -44,7 +44,7 @@ experience:
   - title: Research and Development Internship
     company: Alchera Data Technologies
     company_url: 'https://www.alcheratechnologies.com/'
-    company_logo: org-x
+    company_logo: alchera
     location: Cambridge, UK
     date_start: '2021-07-15'
     date_end: '2021-10-27'
@@ -57,7 +57,7 @@ experience:
   - title: Natural Language Process Internship
     company: DongHua Software co.ltd
     company_url: 'http://www.dhcc.com.cn/'
-    company_logo: org-x
+    company_logo: donghua
     location: Beijing, China
     date_start: '2020-07-10'
     date_end: '2020-09-10'
