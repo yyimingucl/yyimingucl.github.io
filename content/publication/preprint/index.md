@@ -29,12 +29,12 @@ frame prediction using a lightweight Dual-Encoding U-Net built using only 12
 Convolutional layers that incorporates a novel approach to skip-connections between Convolutional LSTM layers. This approach combined with an intuitive handling of training data can model both a temporal and spatio-temporal domain
 shift.
 
-# Summary. An optional shortened abstract.
-# summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
+Summary. An optional shortened abstract.
+summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
 
-# tags:
-# - Source Themes
-# featured: false
+tags:
+- Source Themes
+featured: false
 
 links:
 # - name: Custom Link
