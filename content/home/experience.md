@@ -25,7 +25,7 @@ experience:
   - title: Teaching Assistant 
     company: Department of Statistical Science, UCL
     company_url: 'https://www.ucl.ac.uk/'
-    company_logo: org-gc
+    company_logo: UCL_logo
     location: London, UK
     date_start: '2022-10-01'
     date_end: ''
