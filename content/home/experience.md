@@ -31,14 +31,14 @@ experience:
     date_end: ''
     description: Teaching Assistant for STAT0005 Introduction to Statistical Inference
 
-  - title: Senior Research Assistant
-    company: Edinburgh Napier University 
-    company_url: 'https://www.napier.ac.uk/'
-    company_logo: org-x
-    location: Edinburgh, UK
-    date_start: '2022-03-27'
-    date_end: '2022-09-27'
-    description: Working for the project -Deep Learning for Automatic Cell Counting with High-Resolution Medical Image.
+  # - title: Senior Research Assistant
+  #   company: Edinburgh Napier University 
+  #   company_url: 'https://www.napier.ac.uk/'
+  #   company_logo: org-x
+  #   location: Edinburgh, UK
+  #   date_start: '2022-03-27'
+  #   date_end: '2022-09-27'
+  #   description: Deep Learning for Automatic Cell Counting with High-Resolution Medical Image.
   
   # - title: Research and Development Internship
   #   company: Alchera Data Technologies
