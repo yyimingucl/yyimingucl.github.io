@@ -1,7 +1,10 @@
 ---
 title: "Dual Encoding U-Net for Spatio-Temporal Domain Shift Frame Prediction"
 authors:
-- Jay Santokhi, Yiming Yang, et al.
+- Jay Santokhi
+- admin
+- Dylan Hillier
+- et al.
 date: "2021-10-27T00:00:00Z"
 doi: ""
 
