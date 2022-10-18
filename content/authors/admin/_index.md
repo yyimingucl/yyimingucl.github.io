@@ -44,4 +44,4 @@ Currently, I am researching the methodolgies and applications of Linked Gaussian
 
 <!-- My main research topic is uncertainty quantification for exscale tokamak nuclear simulation, which covers many areas like sensivity analysis, stochastic modelling, computational fluid dynamics, and etc. Currently, I focus on the surrogate modelling for some exscale simulation codes for tokamak nuclear fusion including gaussian process, polynomial regression, and neural networks. Apart from my PhD research, I am also interested in general machine learning tasks, like computer vision and reinforcement learning. -->
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/demo_resume.pdf" "newtab" >}}CV{{< /staticref >}}.
