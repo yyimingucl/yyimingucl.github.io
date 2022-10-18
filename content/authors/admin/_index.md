@@ -1,5 +1,5 @@
 ---
-avatar_filename: [A Figure](profile.jpg)
+avatar_filename: '![]profile.jpg'
 bio: ""
 interests: []
 social:
