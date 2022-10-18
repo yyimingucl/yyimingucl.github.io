@@ -24,8 +24,8 @@ education:
       institution: University College London
       
       year: April, 2022
-    - 
-    course: MSc in Computational Statistics and Machine Learning
+    
+    - course: MSc in Computational Statistics and Machine Learning
       institution: University College London
       year: September, 2020
     - course: BSc in Mathematics and Statistics
