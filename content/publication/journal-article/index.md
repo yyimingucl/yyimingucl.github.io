@@ -17,17 +17,17 @@ publishDate: "2017-01-01T00:00:00Z"
 # publication_types: ["2"]
 
 # Publication name and optional abbreviated publication name.
-publication: "*Proceedings of Machine Learning Research*"
-publication_short: "PMLR"
+publication: " *Proceedings of Machine Learning Research* "
+publication_short: ""
 
 abstract: The IARAI _Traffic4cast_ competitions at NeurIPS 2019 and 2020 showed that neural networks can successfully predict future traffic conditions 1 hour into the future on simply aggregated GPS probe data in time and space bins. We thus reinterpreted the challenge of forecasting traffic conditions as a movie completion task. U-Nets proved to be the winning architecture demonstrating an ability to extract relevant features in this complex real-world geo-spatial process. Building on the previous competitions, _Traffic4cast_ 2021 now focuses on the question of model robustness and generalizability across time and space Moving from one city to an entirely different city, or moving from pre-COVID times to times after COVID hit the world thus introduces a clear domain shift. We thus, for the first time, release data featuring such domain shifts. The competition now covers ten cities over 2 years, providing data compiled from over 10^12 GPS probe data. Winning solutions captured traffic dynamics sufficiently well to even cope with these complex domain shifts. Surprisingly, this seemed to require only the previous 1h traffic dynamic history and static road graph as input.
 
 # Summary. An optional shortened abstract.
-summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
+# summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
 
-tags:
-- Source Themes
-featured: false
+# tags:
+# - Source Themes
+# featured: false
 
 # links:
 # - name: ""
@@ -44,7 +44,7 @@ url_pdf: https://proceedings.mlr.press/v176/eichenberger22a/eichenberger22a.pdf
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder. 
 image:
-  caption: 'Image credit: [**Unsplash**](https://unsplash.com/photos/jdD8gXaTZsc)'
+  caption: 'Image credit: [_Traffic4Cast2021_](https://www.iarai.ac.at/traffic4cast/)'
   focal_point: ""
   preview_only: false
 
@@ -60,7 +60,7 @@ projects: []
 #   Simply enter your slide deck's filename without extension.
 #   E.g. `slides: "example"` references `content/slides/example/index.md`.
 #   Otherwise, set `slides: ""`.
-slides: example
+slides: ""
 ---
 
 <!-- {{% callout note %}}
