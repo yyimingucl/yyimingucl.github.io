@@ -1,5 +1,5 @@
 ---
-avatar_filename: 
+avatar_filename: profile.jpg
 bio: ""
 interests: []
 social:
