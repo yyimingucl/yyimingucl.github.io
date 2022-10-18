@@ -54,18 +54,18 @@ experience:
         * Modelling
         * Deploying
   
-  # - title: Research and Development Internship
-  #   company: Alchera Data Technologies
-  #   company_url: 'https://www.alcheratechnologies.com/'
-  #   company_logo: org-x
-  #   location: Cambridge, UK
-  #   date_start: '2021-07-15'
-  #   date_end: '2021-10-27'
-  #   description: |2-
-  #     Involved Projects:
+  - title: Research and Development Internship
+    company: Alchera Data Technologies
+    company_url: 'https://www.alcheratechnologies.com/'
+    company_logo: org-x
+    location: Cambridge, UK
+    date_start: '2021-07-15'
+    date_end: '2021-10-27'
+    description: |2-
+      Involved Projects:
         
-  #       * [NeurIPS 2021 Traffic4Cast Challenge](https://gitlab.com/alchera/alchera-traffic4cast-2021) 
-  #       * Moive-Completion Framework for Short-Term Traffic Predictions.
+#     * [NeurIPS 2021 Traffic4Cast Challenge](https://gitlab.com/alchera/alchera-traffic4cast-2021) 
+      * Moive-Completion Framework for Short-Term Traffic Predictions.
   
   # - title: Natural Language Process Internship
   #   company: DongHua Software co.ltd
