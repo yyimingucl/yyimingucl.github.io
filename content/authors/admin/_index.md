@@ -20,10 +20,12 @@ organizations:
 education:
   courses:
     - course: PhD in Statistical Science and Advanced Computing
+      
       institution: University College London
+      
       year: April, 2022
-      width: 20
-    - course: MSc in Computational Statistics and Machine Learning
+    - 
+    course: MSc in Computational Statistics and Machine Learning
       institution: University College London
       year: September, 2020
     - course: BSc in Mathematics and Statistics
