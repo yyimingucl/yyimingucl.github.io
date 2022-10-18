@@ -9,9 +9,9 @@ interests:
 social:
   - display:
       header: false
-    link: '#contact'
+  - icon: envelop
     icon_pack: fab
-    icon: envelop
+    link: '/#contact'
   - icon: github
     icon_pack: fab
     link: https://github.com/yyimingucl
