@@ -19,18 +19,16 @@ organizations:
     url: https://www.ucl.ac.uk/
 education:
   courses:
-    - course: PhD in Statistical Science & Advanced Computing
-      
+    - course: PhD in Statistical Science and Advanced Computing   
       institution: University College London
-      
-      year: April, 2022
+      *year: April 2022
     
     - course: MSc in Computational Statistics and Machine Learning
       institution: University College London
-      year: September, 2020
+      year: September 2020
     - course: BSc in Mathematics and Statistics
       institution: University College London
-      year: September, 2017
+      year: September 2017
 superuser: true
 last_name: Yang
 role: PhD Student in Statistical Science and Advanced Computing
