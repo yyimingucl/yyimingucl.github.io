@@ -40,27 +40,31 @@ experience:
     date_end: '2022-09-27'
     description: Working for the project -Deep Learning for Automatic Cell Counting with High-Resolution Medical Image.
   
-  # - title: Research and Development Internship
-  #   company: Alchera Data Technologies
-  #   company_url: 'https://www.alcheratechnologies.com/'
-  #   company_logo: org-x
-  #   location: Cambridge, UK
-  #   date_start: '2021-07-15'
-  #   date_end: '2021-10-27'
-  #   description: Involved Projects
-  #     * NeurIPS 2021 Traffic4Cast Challenge 
-  #     * Moive-Completion Framework for Short-Term Traffic Predictions.
+  - title: Research and Development Internship
+    company: Alchera Data Technologies
+    company_url: 'https://www.alcheratechnologies.com/'
+    company_logo: org-x
+    location: Cambridge, UK
+    date_start: '2021-07-15'
+    date_end: '2021-10-27'
+    description: |2-
+      Involved Projects:
+        
+        * [NeurIPS 2021 Traffic4Cast Challenge](https://gitlab.com/alchera/alchera-traffic4cast-2021) 
+        * Moive-Completion Framework for Short-Term Traffic Predictions.
   
-  # - title: Natural Language Process Internship
-  #   company: DongHua Software co.ltd
-  #   company_url: 'http://www.dhcc.com.cn/'
-  #   company_logo: org-x
-  #   location: Beijing, China
-  #   date_start: '2020-07-10'
-  #   date_end: '2020-9-10'
-  #   description: Involved Projects
-  #     * [Named Entity Recognition for Online Medical Query](https://github.com/yyimingucl/NER-MEDICAL-QUERY)
-  #     * [Medical Knowledge Graph for Medicine Recommendation System](https://github.com/yyimingucl/Medical_KG)
+  - title: Natural Language Process Internship
+    company: DongHua Software co.ltd
+    company_url: 'http://www.dhcc.com.cn/'
+    company_logo: org-x
+    location: Beijing, China
+    date_start: '2020-07-10'
+    date_end: '2020-9-10'
+    description: |2-
+        Involved Projects:
+
+        * [Named Entity Recognition for Online Medical Query](https://github.com/yyimingucl/NER-MEDICAL-QUERY)
+        * [Medical Knowledge Graph for Medicine Recommendation System](https://github.com/yyimingucl/Medical_KG)
 
     
       
