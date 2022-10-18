@@ -1,7 +1,7 @@
 ---
 title: "An example preprint / working paper"
 authors:
-- admin
+- Jay Santokhi, Yiming Yang, et al.
 date: "2021-10-27T00:00:00Z"
 doi: ""
 
@@ -26,16 +26,15 @@ raises the question - "How does one use an abundance of pre-covid mobility data
 to make predictions on future behaviour in a present/post-covid environment?"
 This paper seeks to address this question by introducing an approach for traffic
 frame prediction using a lightweight Dual-Encoding U-Net built using only 12
-Convolutional layers that incorporates a novel approach to skip-connections between Convolutional LSTM layers. This approach combined with an intuitive
-handling of training data can model both a temporal and spatio-temporal domain
+Convolutional layers that incorporates a novel approach to skip-connections between Convolutional LSTM layers. This approach combined with an intuitive handling of training data can model both a temporal and spatio-temporal domain
 shift.
 
 # Summary. An optional shortened abstract.
 # summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
 
-tags:
-- Source Themes
-featured: false
+# tags:
+# - Source Themes
+# featured: false
 
 links:
 # - name: Custom Link
@@ -61,15 +60,15 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `internal-project` references `content/project/internal-project/index.md`.
 #   Otherwise, set `projects: []`.
-projects:
-- internal-project
+# projects:
+# - internal-project
 
 # Slides (optional).
 #   Associate this publication with Markdown slides.
 #   Simply enter your slide deck's filename without extension.
 #   E.g. `slides: "example"` references `content/slides/example/index.md`.
 #   Otherwise, set `slides: ""`.
-slides: example
+# slides: example
 ---
 
 <!-- {{% callout note %}}
