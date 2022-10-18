@@ -2,7 +2,7 @@
 title: "An example preprint / working paper"
 authors:
 - admin
-date: "2019-04-07T00:00:00Z"
+date: "2021-10-27T00:00:00Z"
 doi: ""
 
 # Schedule page publish date (NOT publication's date).
@@ -18,31 +18,41 @@ publication_types: ["3"]
 publication: ""
 publication_short: ""
 
-abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.
+abstract: The landscape of city-wide mobility behaviour has altered significantly over the
+past 18 months. The ability to make accurate and reliable predictions on such
+behaviour has likewise changed drastically with COVID-19 measures impacting
+how populations across the world interact with the different facets of mobility. This
+raises the question - "How does one use an abundance of pre-covid mobility data
+to make predictions on future behaviour in a present/post-covid environment?"
+This paper seeks to address this question by introducing an approach for traffic
+frame prediction using a lightweight Dual-Encoding U-Net built using only 12
+Convolutional layers that incorporates a novel approach to skip-connections between Convolutional LSTM layers. This approach combined with an intuitive
+handling of training data can model both a temporal and spatio-temporal domain
+shift.
 
 # Summary. An optional shortened abstract.
-summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
+# summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
 
 tags:
 - Source Themes
 featured: false
 
 links:
-- name: Custom Link
-  url: http://example.org
-url_pdf: http://arxiv.org/pdf/1512.04133v1
-url_code: 'https://github.com/wowchemy/wowchemy-hugo-themes'
-url_dataset: '#'
-url_poster: '#'
-url_project: ''
-url_slides: ''
-url_source: '#'
-url_video: '#'
+# - name: Custom Link
+#   url: http://example.org
+url_pdf: https://arxiv.org/pdf/2110.11140.pdf
+url_code: 'https://gitlab.com/alchera/alchera-traffic4cast-2021'
+url_dataset: 'https://github.com/iarai/NeurIPS2021-traffic4cast'
+# url_poster: '#'
+# url_project: ''
+# url_slides: ''
+# url_source: '#'
+# url_video: '#'
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder. 
 image:
-  caption: 'Image credit: [**Unsplash**](https://unsplash.com/photos/s9CC2SKySJM)'
+  # caption: 'Image credit: [**Unsplash**](https://unsplash.com/photos/s9CC2SKySJM)'
   focal_point: ""
   preview_only: false
 
@@ -62,8 +72,8 @@ projects:
 slides: example
 ---
 
-{{% callout note %}}
+<!-- {{% callout note %}}
 Create your slides in Markdown - click the *Slides* button to check out the example.
 {{% /callout %}}
 
-Supplementary notes can be added here, including [code, math, and images](https://wowchemy.com/docs/writing-markdown-latex/).
+Supplementary notes can be added here, including [code, math, and images](https://wowchemy.com/docs/writing-markdown-latex/). -->
