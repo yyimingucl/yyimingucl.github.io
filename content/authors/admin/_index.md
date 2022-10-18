@@ -1,7 +1,11 @@
 ---
 avatar_filename: 
 bio: ""
-interests: []
+interests: 
+  - Machine Learning
+  - High Dimensional Statistics 
+  - Uncertainty Quantification
+  - High Performance Computing
 social:
   - display:
       header: false
@@ -19,16 +23,15 @@ organizations:
     url: https://www.ucl.ac.uk/
 education:
   courses:
-    - course: PhD in Statistical Science and Advanced Computing   
+    - course: PhD in Statistics and Advanced Computing   
       institution: University College London
-      *year: April 2022
-    
+      year: 2022 - present
     - course: MSc in Computational Statistics and Machine Learning
       institution: University College London
-      year: September 2020
+      year: 2020 - 2021
     - course: BSc in Mathematics and Statistics
       institution: University College London
-      year: September 2017
+      year: 2017 - 2020
 superuser: true
 last_name: Yang
 role: PhD Student in Statistical Science and Advanced Computing
