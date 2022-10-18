@@ -18,14 +18,14 @@ publication_types: ["3"]
 publication: ""
 publication_short: ""
 
-abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.
+abstract: The landscape of city-wide mobility behaviour has altered significantly over the past 18 months. The ability to make accurate and reliable predictions on such behaviour has likewise changed drastically with COVID-19 measures impacting how populations across the world interact with the different facets of mobility. This raises the question - _"How does one use an abundance of pre-covid mobility data to make predictions on future behaviour in a present/post-covid environment?"_ This paper seeks to address this question by introducing an approach for traffic frame prediction using a lightweight Dual-Encoding U-Net built using only 12 Convolutional layers that incorporates a novel approach to skip-connections between Convolutional LSTM layers.This approach combined with an intuitive handling of training data can model both a temporal and spatio-temporal domain shift.
 
 # Summary. An optional shortened abstract.
-summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
+# summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
 
-tags:
-- Source Themes
-featured: false
+# tags:
+# - Source Themes
+# featured: false
 
 links:
 # - name: Custom Link
