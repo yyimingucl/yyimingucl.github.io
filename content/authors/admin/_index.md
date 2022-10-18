@@ -19,7 +19,7 @@ organizations:
     url: https://www.ucl.ac.uk/
 education:
   courses:
-    - course: PhD in Statistical Science and Advanced Computing
+    - course: PhD in Statistical Science & Advanced Computing
       
       institution: University College London
       
