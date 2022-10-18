@@ -30,9 +30,9 @@ content:
     street: 1-19 Torrington Place 
     city: London
     # region: CA
-    postcode: 'HA9 0NY'
+    postcode: 'WC1E 7HB'
     country: United Kingdom
-    country_code: US
+    country_code: UK
   coordinates:
     latitude: '37.4275'
     longitude: '-122.1697'
