@@ -9,11 +9,10 @@ headless: true
 # Order that this section appears on the page.
 weight: 66
 
-title: Four-Legged Partners
-subtitle: 
+title: My four-legged friends 
+subtitle: Yuumi and Honey
 
 design:
   columns: '1'
-  view: showcase
 ---
 {{< gallery album="demo">}}
