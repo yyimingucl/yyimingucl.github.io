@@ -7,10 +7,10 @@ widget: markdown
 headless: true
 
 # Order that this section appears on the page.
-weight: 66
+weight: 100
 
 title: My four-legged friends 
-subtitle: Yuumi and Honey
+subtitle: Yuumi (British longhair, older brother) and Honey (British shorthair, little brother)
 
 design:
   columns: '1'
