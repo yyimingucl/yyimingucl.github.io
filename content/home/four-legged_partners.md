@@ -17,3 +17,6 @@ design:
 ---
 
 {{< gallery album="demo" >}}
+
+Yuumi 
+Honey
