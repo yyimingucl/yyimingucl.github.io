@@ -14,6 +14,6 @@ subtitle:
 
 design:
   columns: '1'
+  view: showcase
 ---
-
-{{< ref "four-legged_partners/index.md" >}}{{< gallery album="demo" >}}
+{{< gallery album="demo">}}
