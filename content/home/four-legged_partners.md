@@ -1,3 +1,5 @@
+Yuumi and Honey
+
 ---
 # An instance of the Blank widget with a Gallery page element.
 # Documentation: https://wowchemy.com/docs/getting-started/page-builder/
@@ -16,7 +18,7 @@ design:
   columns: '1'
 ---
 
-{{< gallery album="demo" >}}
+{{< ref "four-legged_partners/index.md" >}}{{< gallery album="demo" >}}
 
 Yuumi 
 Honey
