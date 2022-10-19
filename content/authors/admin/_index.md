@@ -10,7 +10,7 @@ social:
   - display:
       header: false
   - icon: envelope
-    icon_pack: fab
+    icon_pack: fas
     link: '/#contact'
   - icon: github
     icon_pack: fab
