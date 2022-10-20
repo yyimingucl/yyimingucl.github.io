@@ -7,9 +7,6 @@ main:
   - name: Home
     url: '#about'
     weight: 10
-  # - name: Posts
-  #   url: '#posts'
-  #   weight: 20
   # - name: Projects
   #   url: '#projects'
   #   weight: 30
@@ -22,12 +19,15 @@ main:
   - name: Publications
     url: '#publications'
     weight: 50
-  - name: Four-legged friends
-    url: '#four-legged_partners'
+  - name: Posts
+    url: '#posts'
     weight: 60
+  - name: Four-legged families
+    url: '#four-legged_partners'
+    weight: 70
   - name: Contact
     url: '#contact'
-    weight: 70
+    weight: 80
 
 # Link to a PDF of your resume/CV from the menu.
 # To enable, copy your resume/CV to `static/uploads/resume.pdf` and uncomment the lines below.

@@ -9,8 +9,8 @@ headless: true
 # Order that this section appears on the page.
 weight: 100
 
-title: My four-legged friends 
-subtitle: Yuumi (British longhair, older brother) and Honey (British shorthair, little brother)
+title: My four-legged families 
+subtitle: [Yuumi]("https://www.instagram.com/yuumi_honey/") (British longhair, older brother) and [Honey]("https://www.instagram.com/yuumi_honey/") (British shorthair, little brother)
 
 design:
   columns: '1'
