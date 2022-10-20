@@ -34,13 +34,12 @@ authors:
 
 
 ## Overview
+
 In regression problem, we are actually looking for a function that maps input {{< math >}}$x${{< math >}} to output {{< math >}}$y${{< math >}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,...) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{< math >}}$(X, Y)${{< math >}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.
 
 Firstly, I will give the definition of [Gaussian Process](https://en.wikipedia.org/wiki/Gaussian_process) from wikipedia: A Gaussian process is a stochastic process (a collection of random variables indexed by time or space) such that every finite collection of those random variables forms a multivariate normal distribution. Remark: **Every finite collection of those random variables forms a multivariate normal distribution**. This property will be our panacea for any upcoming troubles!
 
-
-
-## 1. Two-dimensional Gaussian distribution
+### 1. Two-dimensional Gaussian distribution
 
 - 👉 [**Create a new site**](https://wowchemy.com/templates/)
 - 📚 [**Personalize your site**](https://wowchemy.com/docs/)
