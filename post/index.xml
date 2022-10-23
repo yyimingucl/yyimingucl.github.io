@@ -55,7 +55,8 @@ height="247"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;em>20-dimensional Gaussian distribution&lt;/em>
-The two left figures above, same as in 2D case, are sampled values for {{&amp;lt; math &amp;gt;}}$(x_1,x_2,&amp;hellip;x_{20})${{&amp;lt; /math &amp;gt;}}$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)&lt;/p>
+The two left figures above, same as in 2D case, are sampled values for
+$(x_1,x_2,...x_{20})$$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)&lt;/p>
 &lt;p>What if we fix two random variables and sample again?
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
@@ -68,7 +69,23 @@ width="608"
 height="307"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution remains a Gaussian distribution according to the properties of the Gaussian distribution.&lt;/p>
+What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution
+$(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to the properties of the Gaussian distribution.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp 400w,
+/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_3810a2271173a8af29ba23f96ff14088.webp 760w,
+/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp"
+width="370"
+height="248"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;em>Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)&lt;/em>
+&lt;strong>New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.&lt;/strong> It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, &amp;hellip;, and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.&lt;/p>
+&lt;h3 id="3-gaussian-process-regression">3. Gaussian Process Regression&lt;/h3>
+&lt;p>Recall from the previous definition of a Gaussian process that &lt;strong>any number of random variables constitutes a Gaussian distribution&lt;/strong>. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form: {{&amp;lt; math &amp;gt;}}$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))${{&amp;lt; /math &amp;gt;}} where {{&amp;lt; math &amp;gt;}}$m(\cdot),,,K(\cdot,\cdot)${{&amp;lt; /math &amp;gt;}} are called the mean function and covariance function respectively.&lt;/p>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
@@ -187,7 +204,7 @@ console.log('code block');
 &lt;p>Wowchemy supports the popular &lt;a href="https://plot.ly/" target="_blank" rel="noopener">Plotly&lt;/a> format for interactive charts.&lt;/p>
 &lt;p>Save your Plotly JSON in your page folder, for example &lt;code>line-chart.json&lt;/code>, and then add the &lt;code>{{&amp;lt; chart data=&amp;quot;line-chart&amp;quot; &amp;gt;}}&lt;/code> shortcode where you would like the chart to appear.&lt;/p>
 &lt;p>Demo:&lt;/p>
-&lt;div id="chart-273145896" class="chart">&lt;/div>
+&lt;div id="chart-347851629" class="chart">&lt;/div>
 &lt;script>
 (function() {
 let a = setInterval( function() {
@@ -196,7 +213,7 @@ return;
 }
 clearInterval( a );
 Plotly.d3.json("./line-chart.json", function(chart) {
-Plotly.plot('chart-273145896', chart.data, chart.layout, {responsive: true});
+Plotly.plot('chart-347851629', chart.data, chart.layout, {responsive: true});
 });
 }, 500 );
 })();
