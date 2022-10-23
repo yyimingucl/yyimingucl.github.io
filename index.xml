@@ -163,11 +163,16 @@ Create your slides in Markdown - click the &lt;em>Slides&lt;/em> button to check
 &lt;/div>
 &lt;/div>
 Supplementary notes can be added here, including [code, math, and images](https://wowchemy.com/docs/writing-markdown-latex/). --></description></item><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/getting-started/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/getting-started/</guid><description>&lt;h2 id="overview">Overview&lt;/h2>
-&lt;p>In regression problem, we are actually looking for a function that maps input {{&amp;lt; math &amp;gt;}}$x${{&amp;lt; /math &amp;gt;}} to output {{&amp;lt; math &amp;gt;}}$y${{&amp;lt; /math &amp;gt;}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,&amp;hellip;) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{&amp;lt; math &amp;gt;}}$(X, Y)${{&amp;lt; /math &amp;gt;}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.&lt;/p>
+&lt;p>In regression problem, we are actually looking for a function that maps input
+$x$ to output
+$y$. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,&amp;hellip;) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample
+$(X, Y)$ more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.&lt;/p>
 &lt;p>Firstly, I will give the definition of &lt;a href="https://en.wikipedia.org/wiki/Gaussian_process" target="_blank" rel="noopener">Gaussian Process&lt;/a> from wikipedia: A Gaussian process is a stochastic process (a collection of random variables indexed by time or space) such that every finite collection of those random variables forms a multivariate normal distribution. Remark: &lt;strong>Every finite collection of those random variables forms a multivariate normal distribution&lt;/strong>. This property will be our panacea for any upcoming troubles!
 correlation&lt;/p>
 &lt;h3 id="1-two-dimensional-gaussian-distribution">1. Two-dimensional Gaussian distribution&lt;/h3>
-&lt;p>From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that {{&amp;lt; math &amp;gt;}}$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)${{&amp;lt; /math &amp;gt;}}. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables {{&amp;lt; math &amp;gt;}}$x_1,x_2${{&amp;lt; /math &amp;gt;}}.
+&lt;p>From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that
+$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)$. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables
+$x_1,x_2$.
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -204,7 +209,12 @@ height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;em>cov(x1,x2)=0.95&lt;/em>
-As you can see from the graph above, as the correlation between {{&amp;lt; math &amp;gt;}}$x_1,x_2${{&amp;lt; /math &amp;gt;}} gets larger, the values of {{&amp;lt; math &amp;gt;}}$x_1${{&amp;lt; /math &amp;gt;}} and {{&amp;lt; math &amp;gt;}}$x_2${{&amp;lt; /math &amp;gt;}} that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample, {{&amp;lt; math &amp;gt;}}$x_1${{&amp;lt; /math &amp;gt;}} is always equal to {{&amp;lt; math &amp;gt;}}$x_2${{&amp;lt; /math &amp;gt;}}.&lt;/p>
+As you can see from the graph above, as the correlation between
+$x_1,x_2$ gets larger, the values of
+$x_1$ and
+$x_2$ that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample,
+$x_1$ is always equal to
+$x_2$.&lt;/p>
 &lt;h3 id="2-high-dimensional-gaussian-distribution">2. High-dimensional Gaussian distribution&lt;/h3>
 &lt;p>The simple two-dimensional case was studied, let&amp;rsquo;s now extend to 20 dimensions.
 &lt;figure >
@@ -218,9 +228,9 @@ width="760"
 height="247"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>20-dimensional Gaussian distribution&lt;/em>
-The two left figures above, same as in 2D case, are sampled values for
-$(x_1,x_2,...x_{20})$$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)&lt;/p>
+&lt;em>20-dimensional Gaussian distribution&lt;/em>&lt;/p>
+&lt;p>The two left figures above, same as in 2D case, are sampled values for
+$(x_1,x_2,...x_{20})$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)&lt;/p>
 &lt;p>What if we fix two random variables and sample again?
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
@@ -246,10 +256,75 @@ width="370"
 height="248"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)&lt;/em>
-&lt;strong>New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.&lt;/strong> It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, &amp;hellip;, and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.&lt;/p>
+&lt;em>Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)&lt;/em>&lt;/p>
+&lt;p>&lt;strong>New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.&lt;/strong> It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, &amp;hellip;, and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.&lt;/p>
 &lt;h3 id="3-gaussian-process-regression">3. Gaussian Process Regression&lt;/h3>
-&lt;p>Recall from the previous definition of a Gaussian process that &lt;strong>any number of random variables constitutes a Gaussian distribution&lt;/strong>. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form: {{&amp;lt; math &amp;gt;}}$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))${{&amp;lt; /math &amp;gt;}} where {{&amp;lt; math &amp;gt;}}$m(\cdot),,,K(\cdot,\cdot)${{&amp;lt; /math &amp;gt;}} are called the mean function and covariance function respectively.&lt;/p>
+&lt;p>Recall from the previous definition of a Gaussian process that &lt;strong>any number of random variables constitutes a Gaussian distribution&lt;/strong>. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form:
+$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))$ where
+$m(\cdot)\,\,,K(\cdot,\cdot)$ are called the mean function and covariance function respectively. By definition in this way, we can get ride of the limitation of the discrete case and the mean and covariance matrix can be calculated for any function
+$f(x)$.&lt;/p>
+&lt;p>From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp 400w,
+/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1c1aea4b4a43d3d43ec8b71d775436af.webp 760w,
+/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp"
+width="370"
+height="264"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;em>m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1&lt;/em>&lt;/p>
+&lt;p>The figure above shows the 5 functions sampled from the prior distribution of this function. The blue region is
+$\mu\pm\sigma^2$.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp 400w,
+/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_cc9c723220ba9373755f149f00973496.webp 760w,
+/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp"
+width="370"
+height="248"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+The above figure demonstrates the functions sampled in the posterior distribution, given three samples
+$(x_1,y_1),(x_2,y_2),(x_3,y_3)$. The thick black line is the mean. It can be seen that, same as in the second part of the 20-dimensional discrete case, the variance around the sample points is almost zero. (Another way to understand the process of combing samples is to reject the functions that do not match these sample points.)&lt;/p>
+&lt;h3 id="4-covariance-function-kernel">4. Covariance Function (Kernel)&lt;/h3>
+&lt;p>For given sample
+$X=((x_1),(x_2),...,(x_n)$ (each column is the feature for each sample
+$(x_i)$, then the posterior distribution can be written in the form
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where
+$[K(X,X)]_{ij}=K(x_i,x_j)$.&lt;/p>
+&lt;p>Simply starting from the idea of the kernel trick, it is equivalent to quantifies the relationship between points on the feature space induced by the covariance function (though of course the choice of covariance function varies for different situations). Returning to the perspective of the infinite dimensional Gaussian distribution, the covariance function quantifies the relationship between infinitely closed points. In some sense, the covariance function
+$K(\cdot\,\,,\cdot)$ determines the overall shape of the function (from an a priori perspective, the covaraince function expresses the priori knowledge of the desired function).&lt;/p>
+&lt;p>The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function
+$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2$). The squared-exponential covariance function is used here as an example for a brief discussion.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp 400w,
+/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_23462f43502174721c04e8a2075ffe89.webp 760w,
+/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp"
+width="760"
+height="512"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp 400w,
+/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_078d5070fca6a837e843d92106d91ec1.webp 760w,
+/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp"
+width="760"
+height="471"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;em>Sample from Gaussian Process by squared-exponential covariance function with different parameter L&lt;/em>&lt;/p>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
@@ -368,7 +443,7 @@ console.log('code block');
 &lt;p>Wowchemy supports the popular &lt;a href="https://plot.ly/" target="_blank" rel="noopener">Plotly&lt;/a> format for interactive charts.&lt;/p>
 &lt;p>Save your Plotly JSON in your page folder, for example &lt;code>line-chart.json&lt;/code>, and then add the &lt;code>{{&amp;lt; chart data=&amp;quot;line-chart&amp;quot; &amp;gt;}}&lt;/code> shortcode where you would like the chart to appear.&lt;/p>
 &lt;p>Demo:&lt;/p>
-&lt;div id="chart-347851629" class="chart">&lt;/div>
+&lt;div id="chart-487635912" class="chart">&lt;/div>
 &lt;script>
 (function() {
 let a = setInterval( function() {
@@ -377,7 +452,7 @@ return;
 }
 clearInterval( a );
 Plotly.d3.json("./line-chart.json", function(chart) {
-Plotly.plot('chart-347851629', chart.data, chart.layout, {responsive: true});
+Plotly.plot('chart-487635912', chart.data, chart.layout, {responsive: true});
 });
 }, 500 );
 })();
