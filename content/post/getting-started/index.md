@@ -35,24 +35,30 @@ authors:
 
 ## Overview
 
-In regression problem, we are actually looking for a function that maps input {{< math >}}$x${{< math >}} to output {{< math >}}$y${{< math >}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,...) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{< math >}}$(X, Y)${{< math >}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.
+In regression problem, we are actually looking for a function that maps input {{</* math */>}}$x${{</* math */>}} to output {{</* math */>}}$y${{</* math */>}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,...) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{</* math */>}}$(X, Y)${{</* math */>}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.
 
 Firstly, I will give the definition of [Gaussian Process](https://en.wikipedia.org/wiki/Gaussian_process) from wikipedia: A Gaussian process is a stochastic process (a collection of random variables indexed by time or space) such that every finite collection of those random variables forms a multivariate normal distribution. Remark: **Every finite collection of those random variables forms a multivariate normal distribution**. This property will be our panacea for any upcoming troubles!
 
 ### 1. Two-dimensional Gaussian distribution
+From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that {{</* math */>}}$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)${{</* math */>}}. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables {{</* math */>}}$x_1,x_2${{</* math */>}}.
+![png](2d_gaussian_cov0.png)
+*cov(x1,x2)=0*
+![png](2d_gaussian_cov0.7.png)
+*cov(x1,x2)=0.7*
+![png](2d_gaussian_cov0.95.png)
+*cov(x1,x2)=0.95*
+As you can see from the graph above, as the correlation between {{</* math */>}}$x_1,x_2${{</* math */>}} gets larger, the values of {{</* math */>}}$x_1${{</* math */>}} and {{</* math */>}}$x_2${{</* math */>}} that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample, {{</* math */>}}$x_1${{</* math */>}} is always equal to {{</* math */>}}$x_2${{</* math */>}}. 
 
-- 👉 [**Create a new site**](https://wowchemy.com/templates/)
-- 📚 [**Personalize your site**](https://wowchemy.com/docs/)
-- 💬 [Chat with the **Wowchemy community**](https://discord.gg/z8wNYzb) or [**Hugo community**](https://discourse.gohugo.io)
-- 🐦 Twitter: [@wowchemy](https://twitter.com/wowchemy) [@GeorgeCushen](https://twitter.com/GeorgeCushen) [#MadeWithWowchemy](https://twitter.com/search?q=%23MadeWithWowchemy&src=typed_query)
-- 💡 [Request a **feature** or report a **bug** for _Wowchemy_](https://github.com/wowchemy/wowchemy-hugo-themes/issues)
-- ⬆️ **Updating Wowchemy?** View the [Update Tutorial](https://wowchemy.com/docs/hugo-tutorials/update/) and [Release Notes](https://wowchemy.com/updates/)
+### 2. High-dimensional Gaussian distribution
+The simple two-dimensional case was studied, let's now extend to 20 dimensions.
+![png](finite_sample_demo.png)
+*20-dimensional Gaussian distribution*
+The two left figures above, same as in 2D case, are sampled values for {{</* math */>}}$(x_1,x_2,...x_{20})${{</* math */>}}$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)
 
-## Crowd-funded open-source software
+What if we fix two random variables and sample again?
+![png](finite_sample_with_fixed_dim.png)
 
-To help us develop this template and software sustainably under the MIT license, we ask all individuals and businesses that use it to help support its ongoing maintenance and development via sponsorship.
-
-### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
+<!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 
@@ -92,4 +98,4 @@ Wowchemy and its templates come with **automatic day (light) and night (dark) mo
 
 Copyright 2016-present [George Cushen](https://georgecushen.com).
 
-Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license.
+Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license. -->
