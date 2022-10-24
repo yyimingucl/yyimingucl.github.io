@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts | Yiming Yang</title><link>https://yyimingucl.github.io/post/</link><atom:link href="https://yyimingucl.github.io/post/index.xml" rel="self" type="application/rss+xml"/><description>Posts</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate><image><url>https://yyimingucl.github.io/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_512x512_fill_lanczos_center_3.png</url><title>Posts</title><link>https://yyimingucl.github.io/post/</link></image><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/getting-started/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/getting-started/</guid><description>&lt;h2 id="overview">Overview&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts | Yiming Yang</title><link>https://yyimingucl.github.io/post/</link><atom:link href="https://yyimingucl.github.io/post/index.xml" rel="self" type="application/rss+xml"/><description>Posts</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate><image><url>https://yyimingucl.github.io/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_512x512_fill_lanczos_center_3.png</url><title>Posts</title><link>https://yyimingucl.github.io/post/</link></image><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/getting-started/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/getting-started/</guid><description>&lt;h1 id="overview">Overview&lt;/h1>
 &lt;p>In regression problem, we are actually looking for a function that maps input
 $x$ to output
 $y$. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,&amp;hellip;) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample
@@ -136,7 +136,7 @@ $[K(X,X)]_{ij}=K(x_i,x_j)$.&lt;/p>
 &lt;p>Simply starting from the idea of the kernel trick, it is equivalent to quantifies the relationship between points on the feature space induced by the covariance function (though of course the choice of covariance function varies for different situations). Returning to the perspective of the infinite dimensional Gaussian distribution, the covariance function quantifies the relationship between infinitely closed points. In some sense, the covariance function
 $K(\cdot\,\,,\cdot)$ determines the overall shape of the function (from an a priori perspective, the covaraince function expresses the priori knowledge of the desired function).&lt;/p>
 &lt;p>The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function
-$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2$). The squared-exponential covariance function is used here as an example for a brief discussion.
+$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2}$). The squared-exponential covariance function is used here as an example for a brief discussion.
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -161,6 +161,123 @@ height="471"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;em>Sample from Gaussian Process by squared-exponential covariance function with different parameter L&lt;/em>&lt;/p>
+&lt;h3 id="5-use-gp-for-regression">5. Use GP for regression&lt;/h3>
+&lt;p>Summarizing the above process, a prior is first given for all potential functions by Gaussian process, then, combined with the samples, we obtain the posterior distribution for the function
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where
+$[K(X,X)]_{ij}=K(x_i,x_j)$.&lt;/p>
+&lt;p>Taken the noise into account, the output function becomes
+$y(X)=f(X)+\sigma^2_yI\,\,,\sigma^2_yI\sim\mathcal{N}(0,1)$ and
+$y(X)\sim\mathcal{N}(m(X),K(X,X)+\sigma^2_y)$.&lt;/p>
+&lt;p>&lt;strong>New Question Again: How can we store an infinite dimensional Gaussian distribution in a computer with finite memory? Similarly, for the posterior distribution given samples
+$(X,Y)$, we can see that the parameters are only finite dimensional (the mean is a vector of length n and the covariance matrix is n*n), so does this result contradict or behave inconsistently with the infinite dimensionality?&lt;/strong>&lt;/p>
+&lt;h3 id="6-consistency-and-marginalisation-property">6. Consistency and Marginalisation Property&lt;/h3>
+&lt;p>Both of these problems can be solved perfectly by the &lt;strong>Marginalisation Property&lt;/strong> of the Gaussian distribution. For Multivariate Gaussian distribution:
+$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} a\\ b\end{matrix}\right),\left(\begin{matrix} A &amp;B\\ B^T&amp;C \end{matrix}\right))\Rightarrow P(Y_1)\sim N(a, A)$$
+With this property means that we can split only the part of our interest (samples and predictions) from the entire infinite dimensional Gaussian distribution and ignore these parts are not in our interest (no need to interpolation/extrapolation). This property is then used to derive for the distribution of our part of interest. 1. For the first problem, we just need to keep the multivariate Gaussian distribution of the sample part in the computer. 2. For the second problem, it can be seen from the above properties that the parameters of the marginal distribution obtained by partitioning the whole Gaussian distribution are also part of the parameters of the whole Gaussian distribution (or saying derived from the parameters of the infinite-dimensional distribution), thus ensuring consistency with the results of the Gaussian process.&lt;/p>
+&lt;h3 id="7-prediction">7. Prediction&lt;/h3>
+&lt;p>Assume
+$Y_1$ is the sample value,
+$Y_2$ is the predicted value and
+$m(x)=0$. By the definition of Gaussian Process,
+$$\Rightarrow P(Y_1(X),Y_2(X))\sim N(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&amp;K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&amp;K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
+$$\Rightarrow P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$$
+$$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$$
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp 400w,
+/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_c8391795b87ddd0adc204f10431f8ae8.webp 760w,
+/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp"
+width="228"
+height="174"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>Till now, we can calculate the conditional probability distribution to predict
+$Y_2$ given the sample
+$Y_1$. Looking at these two parameters separately,&lt;/p>
+&lt;ul>
+&lt;li>the covariance of the conditional probability:
+$\Sigma_{Y_2|Y_1}=K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})\Leftrightarrow$ predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples.
+$K(X_{Y_2},X_{Y_2})$ is derived from the covaraince function
+$K(x_i,x_j)$ given in the previous definition of the prior, computed from the given inputs, so it can be seen as uncertainty in the prior.
+$K(X_{Y_1},X_{Y_2})$ is obtained from the inputs corresponding to the predicted values
+$X_{Y_2}$, with the inputs corresponding to the samples
+$X_{Y_1}$ calculated by the covariance function, which quantifies the correlation between the samples and the predicted inputs.
+$K(X_{Y_1},X_{Y_1})$ is the covariance matrix obtained from the sample. If the whole second term of the formula can be seen as the exponential term in the Gaussian distribution, and simply
+$K(X_{Y_2},X_{Y_1})$ as
+$(X_{Y_2}-X_{Y_1})$ (both measure the relationship between points), then it can be interpreted as follows, the higher the correlation with the sample (closer to the mean), the larger the value
+$K(X_{Y_2},X_{Y_1})$ will be. Note the negative sign in the covariance,
+$\Rightarrow$ Reduce more uncertainty
+$\Rightarrow$ Higher correlation with the sample
+$\Rightarrow$ Lower uncertainty of the predicition.&lt;/li>
+&lt;/ul>
+&lt;p>The mean of marginal distribution:
+$$
+\mu_{Y_2|Y_1}=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\ =\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\ (\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+$$
+It is worth noting that the mean of the entire predictive distribution can be seen as a weighted average of the sample outputs Y1 (in general, the more relevant the sample, the larger the corresponding weight). Also this form coincides with the dual form of L2 regression.&lt;/p>
+&lt;h3 id="8-weight-space">8. Weight Space&lt;/h3>
+&lt;p>The above has discussed Gaussian regression from the view of function space, and weight space is another perspective to understand.
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp 400w,
+/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_25a6fce1a6fb0abd787b4921a3e49ae2.webp 760w,
+/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp"
+width="505"
+height="315"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+The above figure depicts linear regression from the weight space, which is restricted to a specific functional form with a prior distribution (
+$\mathcal{N}(0,C)$) added to the weights, and the likelihood of the whole form can be written as
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp 400w,
+/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_9af037b5cbaff6333035c5b823543383.webp 760w,
+/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp"
+width="647"
+height="138"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+The posterior distribution of the weights can be obtained by integrating the prior distribution of the likelihood and the weights through the Bayesian formula
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp 400w,
+/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_4b8e597238208c47317fc2901808229e.webp 760w,
+/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp"
+width="720"
+height="263"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+For a Gaussian distribution, mode = mean, so we obtain the maximum a posteriori estimation
+$=\bar{w}$. Looking at the mean, considering the standard noise case
+$\sigma_n^2=1$, the prior covariance of
+$w$ is
+$\lambda I_n$,which gives the least squares estimate of L2 regression
+$\bar{w}=(XX^T+\lambda I_n)^{-1}Xy$. (In fact, when
+$y$ satisfies the assumption of a Gaussian distribution, the least squares estimate of the parameter
+$w$ is equivalent to the maximum likelihood estimate). The L2 regression can be viewed in a Bayesian way as adding a prior distribution of
+$\mathcal{N}(0,\lambda I_n)$ to the parameter
+$w$ (The L1 regression can be seen as adding a
+$Laplace(0,\frac{1}{\lambda})$ prior to the parameter
+$w$). Furthermore, we can think of a general linear regression as having an uniform prior distribution (improper prior) for parameter
+$w$). Finally, returning to the problem of infinitely possible functions, where the weight space restricts the form/type of the function, it is necessary to construct feature maps explicitly to transform different functional forms. This again aligns the idea of implicit construction of features using the kernel in function space.&lt;/p>
+&lt;ul>
+&lt;li>Reference:
+&lt;ul>
+&lt;li>[1] C.E.Rasmussen&amp;amp;C.K.I Williams, Gaussian Process for Machine Learning (GPML), 2006&lt;/li>
+&lt;li>[2] CM.Bishop, Pattern Recognition and Machine Learning (PRML), 2006&lt;/li>
+&lt;li>[3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
@@ -279,7 +396,7 @@ console.log('code block');
 &lt;p>Wowchemy supports the popular &lt;a href="https://plot.ly/" target="_blank" rel="noopener">Plotly&lt;/a> format for interactive charts.&lt;/p>
 &lt;p>Save your Plotly JSON in your page folder, for example &lt;code>line-chart.json&lt;/code>, and then add the &lt;code>{{&amp;lt; chart data=&amp;quot;line-chart&amp;quot; &amp;gt;}}&lt;/code> shortcode where you would like the chart to appear.&lt;/p>
 &lt;p>Demo:&lt;/p>
-&lt;div id="chart-487635912" class="chart">&lt;/div>
+&lt;div id="chart-964128375" class="chart">&lt;/div>
 &lt;script>
 (function() {
 let a = setInterval( function() {
@@ -288,7 +405,7 @@ return;
 }
 clearInterval( a );
 Plotly.d3.json("./line-chart.json", function(chart) {
-Plotly.plot('chart-487635912', chart.data, chart.layout, {responsive: true});
+Plotly.plot('chart-964128375', chart.data, chart.layout, {responsive: true});
 });
 }, 500 );
 })();
