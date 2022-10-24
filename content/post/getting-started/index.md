@@ -33,7 +33,7 @@ authors:
 ---
 
 
-## Overview
+# Overview
 
 In regression problem, we are actually looking for a function that maps input {{< math >}}$x${{< /math >}} to output {{< math >}}$y${{< /math >}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,...) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{< math >}}$(X, Y)${{< /math >}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.
 
@@ -81,11 +81,57 @@ For given sample {{< math >}}$X=((x_1),(x_2),...,(x_n)${{< /math >}} (each colum
 
 Simply starting from the idea of the kernel trick, it is equivalent to quantifies the relationship between points on the feature space induced by the covariance function (though of course the choice of covariance function varies for different situations). Returning to the perspective of the infinite dimensional Gaussian distribution, the covariance function quantifies the relationship between infinitely closed points. In some sense, the covariance function {{< math >}}$K(\cdot\,\,,\cdot)${{< /math >}} determines the overall shape of the function (from an a priori perspective, the covaraince function expresses the priori knowledge of the desired function). 
 
-The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function {{< math >}}$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2${{< /math >}}). The squared-exponential covariance function is used here as an example for a brief discussion.
+The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function {{< math >}}$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2}${{< /math  >}}). The squared-exponential covariance function is used here as an example for a brief discussion.
 ![png](kernel_demo.png)
 The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.
 ![png](covariance_prior_demo.png)
 *Sample from Gaussian Process by squared-exponential covariance function with different parameter L*
+
+### 5. Use GP for regression
+Summarizing the above process, a prior is first given for all potential functions by Gaussian process, then, combined with the samples, we obtain the posterior distribution for the function {{< math >}}$f(X)\sim\mathcal{N}(m(X),K(X,X)${{< /math >}} where {{< math >}}$[K(X,X)]_{ij}=K(x_i,x_j)${{< /math >}}.
+
+Taken the noise into account, the output function becomes {{< math >}}$y(X)=f(X)+\sigma^2_yI\,\,,\sigma^2_yI\sim\mathcal{N}(0,1)${{< /math >}} and {{< math >}}$y(X)\sim\mathcal{N}(m(X),K(X,X)+\sigma^2_y)${{< /math >}}.
+
+**New Question Again: How can we store an infinite dimensional Gaussian distribution in a computer with finite memory? Similarly, for the posterior distribution given samples {{< math >}}$(X,Y)${{< /math >}}, we can see that the parameters are only finite dimensional (the mean is a vector of length n and the covariance matrix is n*n), so does this result contradict or behave inconsistently with the infinite dimensionality?**
+
+### 6. Consistency and Marginalisation Property
+Both of these problems can be solved perfectly by the **Marginalisation Property** of the Gaussian distribution. For Multivariate Gaussian distribution:
+{{< math >}}$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} 	a\\ 	b\end{matrix}\right),\left(\begin{matrix} 	A &B\\ 	B^T&C \end{matrix}\right))\Rightarrow P(Y_1)\sim N(a, A)$${{< /math >}}
+With this property means that we can split only the part of our interest (samples and predictions) from the entire infinite dimensional Gaussian distribution and ignore these parts are not in our interest (no need to interpolation/extrapolation). This property is then used to derive for the distribution of our part of interest. 1. For the first problem, we just need to keep the multivariate Gaussian distribution of the sample part in the computer. 2. For the second problem, it can be seen from the above properties that the parameters of the marginal distribution obtained by partitioning the whole Gaussian distribution are also part of the parameters of the whole Gaussian distribution (or saying derived from the parameters of the infinite-dimensional distribution), thus ensuring consistency with the results of the Gaussian process.
+
+### 7. Prediction
+Assume {{< math >}}$Y_1${{< /math >}} is the sample value, {{< math >}}$Y_2${{< /math >}} is the predicted value and {{< math >}}$m(x)=0${{< /math >}}. By the definition of Gaussian Process, 
+{{< math >}}$$\Rightarrow P(Y_1(X),Y_2(X))\sim N(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&K(X_{Y_2},X_{Y_2})\end{matrix}\right))$${{< /math >}}
+{{< math >}}$$\Rightarrow P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$${{< /math >}} 
+{{< math >}}$$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$${{< /math >}} 
+![png](predictive_distribution.png)
+
+Till now, we can calculate the conditional probability distribution to predict {{< math >}}$Y_2${{< /math >}} given the sample {{< math >}}$Y_1${{< /math >}}. Looking at these two parameters separately, 
+
+- the covariance of the conditional probability:
+{{< math >}}$\Sigma_{Y_2|Y_1}=K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})\Leftrightarrow${{< /math >}} predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples. {{< math >}}$K(X_{Y_2},X_{Y_2})${{< /math >}} is derived from the covaraince function {{< math >}}$K(x_i,x_j)${{< /math >}} given in the previous definition of the prior, computed from the given inputs, so it can be seen as uncertainty in the prior. {{< math >}}$K(X_{Y_1},X_{Y_2})${{< /math >}} is obtained from the inputs corresponding to the predicted values {{< math >}}$X_{Y_2}${{< /math >}}, with the inputs corresponding to the samples {{< math >}}$X_{Y_1}${{< /math >}} calculated by the covariance function, which quantifies the correlation between the samples and the predicted inputs. {{< math >}}$K(X_{Y_1},X_{Y_1})${{< /math >}} is the covariance matrix obtained from the sample. If the whole second term of the formula can be seen as the exponential term in the Gaussian distribution, and simply {{< math >}}$K(X_{Y_2},X_{Y_1})${{< /math >}} as {{< math >}}$(X_{Y_2}-X_{Y_1})${{< /math >}} (both measure the relationship between points), then it can be interpreted as follows, the higher the correlation with the sample (closer to the mean), the larger the value {{< math >}}$K(X_{Y_2},X_{Y_1})${{< /math >}} will be. Note the negative sign in the covariance, {{< math >}}$\Rightarrow${{< /math >}} Reduce more uncertainty {{< math >}}$\Rightarrow${{< /math >}} Higher correlation with the sample {{< math >}}$\Rightarrow${{< /math >}} Lower uncertainty of the predicition.
+
+The mean of marginal distribution:
+{{< math >}}
+$$
+\mu_{Y_2|Y_1}=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\ =\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\ (\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+$$
+{{< /math >}}
+It is worth noting that the mean of the entire predictive distribution can be seen as a weighted average of the sample outputs Y1 (in general, the more relevant the sample, the larger the corresponding weight). Also this form coincides with the dual form of L2 regression.
+
+### 8. Weight Space
+The above has discussed Gaussian regression from the view of function space, and weight space is another perspective to understand.
+![png](bayesian_regression_diagram.png)
+The above figure depicts linear regression from the weight space, which is restricted to a specific functional form with a prior distribution ({{< math >}}$\mathcal{N}(0,C)${{< /math >}}) added to the weights, and the likelihood of the whole form can be written as 
+![png](gp_likelihood.png)
+The posterior distribution of the weights can be obtained by integrating the prior distribution of the likelihood and the weights through the Bayesian formula
+![png](gp_weight_posterior.png)
+For a Gaussian distribution, mode = mean, so we obtain the maximum a posteriori estimation {{< math >}}$=\bar{w}${{< /math >}}. Looking at the mean, considering the standard noise case {{< math >}}$\sigma_n^2=1${{< /math >}}, the prior covariance of {{< math >}}$w${{< /math >}} is {{< math >}}$\lambda I_n${{< /math >}},which gives the least squares estimate of L2 regression {{< math >}}$\bar{w}=(XX^T+\lambda I_n)^{-1}Xy${{< /math >}}. (In fact, when {{< math >}}$y${{< /math >}} satisfies the assumption of a Gaussian distribution, the least squares estimate of the parameter {{< math >}}$w${{< /math >}} is equivalent to the maximum likelihood estimate). The L2 regression can be viewed in a Bayesian way as adding a prior distribution of {{< math >}}$\mathcal{N}(0,\lambda I_n)${{< /math >}} to the parameter {{< math >}}$w${{< /math >}} (The L1 regression can be seen as adding a {{< math >}}$Laplace(0,\frac{1}{\lambda})${{< /math >}} prior to the parameter {{< math >}}$w${{< /math >}}). Furthermore, we can think of a general linear regression as having an uniform prior distribution (improper prior) for parameter {{< math >}}$w${{< /math >}}). Finally, returning to the problem of infinitely possible functions, where the weight space restricts the form/type of the function, it is necessary to construct feature maps explicitly to transform different functional forms. This again aligns the idea of implicit construction of features using the kernel in function space.
+
+- Reference:
+  * [1] C.E.Rasmussen&C.K.I Williams, Gaussian Process for Machine Learning (GPML), 2006
+  * [2] CM.Bishop, Pattern Recognition and Machine Learning (PRML), 2006
+  * [3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
