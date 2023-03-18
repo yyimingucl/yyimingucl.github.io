@@ -43,7 +43,6 @@ A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d
 {{< math >}}$y${{< math >}} and the predicted value {{< math >}}$f^*${{< math >}} is a Gaussian distribution, which has the following form:
 {{< math >}}
 $$
-\begin{equation}
 \bm{y},\bm{f}^*|\bm{X},\bm{x}^*\sim\mathcal{N}(\begin{bmatrix}             \bm{y}\\            \bm{f}^*\\          \end{bmatrix}|\,\bm{0},\begin{bmatrix}             \bm{K_y}&\bm{k}_*\\            \bm{k}_*&\bm{k}_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
 $$
 {{< math >}}
