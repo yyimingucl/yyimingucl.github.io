@@ -126,11 +126,124 @@ $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
-\begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$\\ and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, \\ then we can get the approximate of desired integral} \end{split}
+\begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$}\\ &amp; \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx\\ &amp;\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\&amp; \text{then we can get the approximate of desired integral} \end{split}
 $$
 &lt;/p>
 &lt;h3 id="42-posterior-distribution-hahahugoshortcodes78hbhb">4.2 Posterior distribution
 $p(f|X,y)$&lt;/h3>
+&lt;p>Roughly speaking, under the second-order Taylor approximation,
+$g(x)$ is proportional to
+$\mathcal{N}(x_0, h^{''}(x_0))$. By replacing
+$g(x)$ with the posterior
+$p(f|X, y)$ in the above derivation and performing a second-order Taylor expansion around the maximum value
+$\hat{f}$, we can determine the parameters
+$\mu$ and
+$\Sigma$ of the approximate distribution
+$q$.
+$$
+q(f|X,y)=\mathcal{N}(f|\hat{f},\,A^{-1})\propto \exp{(-\frac{1}{2}(f-\hat{f})^TA(f-\hat{f}))}\,\,\,\,\,\,\,\,\,(3)
+$$
+(Jumping out of the discussion on this article or Gaussian processes, Laplace&amp;rsquo;s approximation has much broader applications. It is highly recommended that you learn about this method itself. You can refer to this blog post - &lt;a href="https://gregorygundersen.com/blog/2019/05/08/laplaces-method/" target="_blank" rel="noopener">Laplace&amp;rsquo;s Method&lt;/a>.), where
+$\hat{f}=\arg\max_f\,p(f|X,\,y)$,
+$A=-\nabla\nabla\log p(f|X,y)|_{f=\hat{f}}$. The next question is: &lt;strong>how to find
+$\hat{f}$ and its corresponding Hessian matrix
+$-\nabla\nabla\log p(\hat{f}|X,y)$?&lt;/strong>
+$$
+\begin{split} \log p(f|X,y)&amp;=\log p(y|f)+\log p(f|X)-\log p(y|X)\\ &amp;\text{take derivative wrt $f$，$\log p(y|X)$ can be viewed as constant}\\ &amp;\propto \log p(y|f)+\log p(f|X)\\ &amp;f|X\sim\mathcal{GP}(\mu(X),K(X,X))\\ &amp;=\log p(y|f) - \frac{1}{2}f^TK^{-1}f-\frac{1}{2}\log|K|-\frac{n}{2}\log2\pi \\ &amp;=\Psi(f)\,\,\,\,\,\,\,\,\,(4) \end{split}
+$$
+Take derivative of (4) with respect to
+$f\Rightarrow$
+$$
+\begin{split} &amp;\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)\\ &amp;\nabla\nabla\Psi(f)=\nabla\nabla\log p(y|f)-K^{-1}=-W-K^{-1}\,\,\,\,\,\,\,(6) \end{split}
+$$
+where
+$W=-\nabla\nabla\log p(y|f)$ It should be noted that because we assume that each sample
+$(x_i, y_i), (x_j, y_j)$ is independent, this means that their corresponding latent variables
+$f_i, f_j$ are also independent of each other. So the matrix
+$W$ we obtain is a diagonal matrix, which greatly simplifies our calculations. Recall that
+$p(y|f) = \sigma(y_i f_i)$, where
+$\sigma(\,\cdot\,)$ has many choices. Below are the logarithmic forms, first-order derivatives, and second-order derivatives of two commonly used functions: the logistic function and the Probit function:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_672e589c4109371306c5811ea82d4a2e.webp 400w,
+/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_5df907cb22642d7a434e3757bda5afef.webp 760w,
+/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_672e589c4109371306c5811ea82d4a2e.webp"
+width="579"
+height="153"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>Table from [2]. The first row is for the logistic function and the second is for the probit function.&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">In the case of
+$f = \hat{f}$, our first-order derivative
+$(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
+$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it. Here, we can use Newton&amp;rsquo;s method for iteration:&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">
+$$
+\begin{split} f^{\text{new}}=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi&amp;=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\ &amp;=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f)) \end{split}
+$$
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">After finding
+$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&amp;rsquo;s approximation:&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">
+$$
+q(\bm{f}|\bm{X},\bm{y})=\mathcal{N}(\bm{\hat{f}},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
+$$
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">The biggest drawback of using Laplace&amp;rsquo;s approximation is that the approximate distribution
+$q$ we obtain may differ greatly from the true distribution
+$p$. This is because we only use the mean
+$\mu$ and covariance
+$\Sigma$ of the
+$p$ distribution as parameters of the Gaussian distribution
+$q$. However, this information may (1) be far from sufficient to fully describe the distribution
+$p$ or (2) not correctly reflect the characteristics of the distribution
+$p$, such as if
+$p$ is a long-tail distribution or a multi-modal distribution.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_11f2f52097b907d18ee101f0986a7c2c.webp 760w,
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp"
+width="760"
+height="349"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>Laplace&amp;rsquo;s approximation: (left) using Laplace&amp;rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&amp;rsquo;s approximation for a unimodal distribution p will result in a good approximation q.&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem

@@ -5,7 +5,7 @@
 <a href=# class="dropdown-item js-set-theme-dark"><span>Dark</span></a>
 <a href=# class="dropdown-item js-set-theme-auto"><span>Automatic</span></a></div></li></ul></div></nav></header></div><div class=page-body><article class=article><div class="article-container pt-3"><h1>Gaussian process classification and its approximate inference approaches</h1><div class=article-metadata><div><span class=author-highlighted>Yiming Yang</span></div><span class=article-date>Dec 13, 2022</span>
 <span class=middot-divider></span>
-<span class=article-reading-time>5 min read</span></div></div><div class=article-container><div class=article-style><h2 id=introduction>Introduction</h2><p>In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &lsquo;finding a function mapping from input
+<span class=article-reading-time>7 min read</span></div></div><div class=article-container><div class=article-style><h2 id=introduction>Introduction</h2><p>In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &lsquo;finding a function mapping from input
 $x$ to output
 $y$&rsquo;. However, compared to regression problems, Gaussian processes encounter many challenging issues when dealing with classification problems. This article will elucidate these issues and provide corresponding solutions.</p><h2 id=1-review-gaussian-process-regression>1. Review: Gaussian Process Regression</h2><p>A Gaussian process is a stochastic process where any point
 $x\in R^d$ is assigned a random variable
@@ -100,9 +100,61 @@ $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
-\begin{split} &\text{Firstly, we define $h(x)=\log(g(x))$}\\ &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &\text{we know $g(x)$ will be maximum at $x_0$\\ and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, \\ then we can get the approximate of desired integral} \end{split}
+\begin{split} &\text{Firstly, we define $h(x)=\log(g(x))$}\\ &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &\text{we know $g(x)$ will be maximum at $x_0$}\\ & \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &\Rightarrow\int_a^bg(x)\,dx\approx\\ &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\& \text{then we can get the approximate of desired integral} \end{split}
 $$</p><h3 id=42-posterior-distribution-hahahugoshortcodes78hbhb>4.2 Posterior distribution
-$p(f|X,y)$</h3><!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
+$p(f|X,y)$</h3><p>Roughly speaking, under the second-order Taylor approximation,
+$g(x)$ is proportional to
+$\mathcal{N}(x_0, h^{''}(x_0))$. By replacing
+$g(x)$ with the posterior
+$p(f|X, y)$ in the above derivation and performing a second-order Taylor expansion around the maximum value
+$\hat{f}$, we can determine the parameters
+$\mu$ and
+$\Sigma$ of the approximate distribution
+$q$.
+$$
+q(f|X,y)=\mathcal{N}(f|\hat{f},\,A^{-1})\propto \exp{(-\frac{1}{2}(f-\hat{f})^TA(f-\hat{f}))}\,\,\,\,\,\,\,\,\,(3)
+$$
+(Jumping out of the discussion on this article or Gaussian processes, Laplace&rsquo;s approximation has much broader applications. It is highly recommended that you learn about this method itself. You can refer to this blog post - <a href=https://gregorygundersen.com/blog/2019/05/08/laplaces-method/ target=_blank rel=noopener>Laplace&rsquo;s Method</a>.), where
+$\hat{f}=\arg\max_f\,p(f|X,\,y)$,
+$A=-\nabla\nabla\log p(f|X,y)|_{f=\hat{f}}$. The next question is: <strong>how to find
+$\hat{f}$ and its corresponding Hessian matrix
+$-\nabla\nabla\log p(\hat{f}|X,y)$?</strong>
+$$
+\begin{split} \log p(f|X,y)&=\log p(y|f)+\log p(f|X)-\log p(y|X)\\ &\text{take derivative wrt $f$，$\log p(y|X)$ can be viewed as constant}\\ &\propto \log p(y|f)+\log p(f|X)\\ &f|X\sim\mathcal{GP}(\mu(X),K(X,X))\\ &=\log p(y|f) - \frac{1}{2}f^TK^{-1}f-\frac{1}{2}\log|K|-\frac{n}{2}\log2\pi \\ &=\Psi(f)\,\,\,\,\,\,\,\,\,(4) \end{split}
+$$
+Take derivative of (4) with respect to
+$f\Rightarrow$
+$$
+\begin{split} &\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)\\ &\nabla\nabla\Psi(f)=\nabla\nabla\log p(y|f)-K^{-1}=-W-K^{-1}\,\,\,\,\,\,\,(6) \end{split}
+$$
+where
+$W=-\nabla\nabla\log p(y|f)$ It should be noted that because we assume that each sample
+$(x_i, y_i), (x_j, y_j)$ is independent, this means that their corresponding latent variables
+$f_i, f_j$ are also independent of each other. So the matrix
+$W$ we obtain is a diagonal matrix, which greatly simplifies our calculations. Recall that
+$p(y|f) = \sigma(y_i f_i)$, where
+$\sigma(\,\cdot\,)$ has many choices. Below are the logarithmic forms, first-order derivatives, and second-order derivatives of two commonly used functions: the logistic function and the Probit function:</p><table><thead><tr><th style=text-align:center><figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_672e589c4109371306c5811ea82d4a2e.webp 400w,
+/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_5df907cb22642d7a434e3757bda5afef.webp 760w,
+/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_672e589c4109371306c5811ea82d4a2e.webp width=579 height=153 loading=lazy data-zoomable></div></div></figure></th></tr></thead><tbody><tr><td style=text-align:center><em>Table from [2]. The first row is for the logistic function and the second is for the probit function.</em></td></tr><tr><td style=text-align:center>In the case of
+$f = \hat{f}$, our first-order derivative
+$(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
+$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it. Here, we can use Newton&rsquo;s method for iteration:</td></tr><tr><td style=text-align:center>$$
+\begin{split} f^{\text{new}}=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi&=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\ &=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f)) \end{split}
+$$</td></tr><tr><td style=text-align:center>After finding
+$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&rsquo;s approximation:</td></tr><tr><td style=text-align:center>$$
+q(\bm{f}|\bm{X},\bm{y})=\mathcal{N}(\bm{\hat{f}},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
+$$</td></tr><tr><td style=text-align:center>The biggest drawback of using Laplace&rsquo;s approximation is that the approximate distribution
+$q$ we obtain may differ greatly from the true distribution
+$p$. This is because we only use the mean
+$\mu$ and covariance
+$\Sigma$ of the
+$p$ distribution as parameters of the Gaussian distribution
+$q$. However, this information may (1) be far from sufficient to fully describe the distribution
+$p$ or (2) not correctly reflect the characteristics of the distribution
+$p$, such as if
+$p$ is a long-tail distribution or a multi-modal distribution.</td></tr><tr><td style=text-align:center><figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_11f2f52097b907d18ee101f0986a7c2c.webp 760w,
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp width=760 height=349 loading=lazy data-zoomable></div></div></figure></td></tr><tr><td style=text-align:center>:&ndash;:</td></tr><tr><td style=text-align:center><em>Laplace&rsquo;s approximation: (left) using Laplace&rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&rsquo;s approximation for a unimodal distribution p will result in a good approximation q.</em></td></tr></tbody></table><!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 
