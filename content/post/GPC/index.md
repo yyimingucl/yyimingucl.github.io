@@ -1,5 +1,5 @@
 ---
-title: From gaussian process back to linear regression 
+title: Gaussian process classification and its approximate inference approaches
 
 # # Summary for listings and search engines
 # summary: Welcome 👋 We know that first impressions are important, so we've populated your new site with some initial content to help you get familiar with everything in no time.
@@ -8,10 +8,10 @@ title: From gaussian process back to linear regression
 projects: []
 
 # Date published
-date: '2020-12-13T00:00:00Z'
+date: '2022-12-13T00:00:00Z'
 
 # Date updated
-lastmod: '2020-12-13T00:00:00Z'
+lastmod: '2022-12-13T00:00:00Z'
 
 # Is this an unpublished draft?
 draft: false
@@ -52,6 +52,7 @@ $$
 \bm{f}^*|\bm{x}_*,\bm{X},\bm{y}\sim\mathcal{N}(\bm{f}^*|\bm{\mu}_*,\bm{\Sigma}_*),\,\,\,\,\bm{\mu}_*=\bm{k}_*^T\bm{K}_y^{-1}\bm{y}\,\,,\,\bm{\Sigma}_*=\bm{k}_{**}-\bm{k}_*^T\bm{K}_y^{-1}\bm{k}_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
 $$
 {{< /math >}}
+You can check the [previous article](https://yyimingucl.github.io/post/gpr/) for more information.
 
 
 
