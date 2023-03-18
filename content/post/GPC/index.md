@@ -173,6 +173,22 @@ Recall that {{< math >}}$\pi(x^*) = p(y^*=1|x^*)${{< /math >}}, where {{< math >
 |*(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.*|
 From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution, {{< math >}}$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)${{< /math >}}, to determine whether to use equation (10). Similarly, due to the existence of {{< math >}}$\sigma(f^*)${{< /math >}}, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of {{< math >}}$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)${{< /math >}} and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.
 
+## 5. Expectation Propagation - EP
+* In this derivation, the response function {{< math >}}$\sigma${{< /math >}} used is the cumulative probability function {{< math >}}$\Phi${{< /math >}} (probit function) of the standard normal distribution: {{< math >}}$p(y_i|f_i) = \Phi(f_i y_i)${{< /math >}}
+### 5.1 Introduction 
+Compared to the global approximation of Laplace's method, Expectation Propagation (EP) updates the global approximation by iterating through and updating each local approximation until convergence. First, we decompose the likelihood:
+{{< math >}}
+$$
+p(f|X,y)=\frac{1}{Z}p(f|X)\prod_{i=1}^np(y_i|f_i)，Z=p(y|X)=\int p(f|X)\prod_{i=1}^np(y_i|f_i)\,df
+$$
+{{< /math >}}
+For the non-Gaussian likelihood of each sample, we make the following approximation:
+{{< math >}}
+$$
+p(y_i|f_i) \simeq t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\tilde{Z}_i\mathcal{N}(f_i|\tilde{\mu}_i,\tilde{\sigma}_i^2)\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(11)
+$$
+{{< /math >}}
+where {{< math >}}$\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i${{< /math >}} is called the site parameters for approximating the likelihood of sample {{< math >}}$i${{< /math >}}, it is interesting to note that we are using an unnormalized Gaussian distribution of fi to approximate a Gaussian distribution of {{< math >}}$y_i${{< /math >}}. Upon careful consideration, this approximation is reasonable. We can consider the likelihood {{< math >}}$p(y_i|f_i)${{< /math >}} as a conditional probability distribution of {{< math >}}$y_i${{< /math >}} given {{< math >}}$f_i${{< /math >}}. Since {{< math >}}$y_i${{< /math >}} is fixed, we are more concerned about {{< math >}}$f_i${{< /math >}} and want to know how {{< math >}}$f_i${{< /math >}} affects or explains our target value {{< math >}}$y_i${{< /math >}}. In other words, if the likelihood is a function of {{< math >}}$f_i${{< /math >}}, we are more interested in how the likelihood changes with {{< math >}}$f_i${{< /math >}}. (In regression problems, the distribution of {{< math >}}$y_i|f_i${{< /math >}} is also determined by the selected distribution of {{< math >}}$f_i${{< /math >}}. The difference is that in regression problems, we can directly calculate the distribution of {{< math >}}$y_i|f_i${{< /math >}}, while in classification problems, an approximation is needed.) Since the approximate likelihood of each sample is Gaussian, we can obtain: {{< math >}}$\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\tilde{\bm{\mu}},\tilde{\Sigma})\prod_i\tilde{Z}_i${{< /math >}} where {{< math >}}$\tilde{\bm{\mu}}=(\tilde{\mu}_1,...,\tilde{\mu}_n)\,\,\text{and}\,\,\tilde{\Sigma}\,\,\text{is diagnoal}\,\,\tilde{\Sigma}_{ii}=\tilde{\sigma}^2_i${{< /math >}}
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
