@@ -247,6 +247,35 @@ $$
 We have now completed the update of the approximate likelihood {{< math >}}$t_i${{< /math >}} for sample {{< math >}}$i${{< /math >}}. Expectation propagation is iteratively applied, updating each local approximation value in turn. Since the update of each local approximation affects the overall approximation, we need to perform multiple updates for each set of samples until the overall likelihood converges.
 
 ### 5.2 Predication
+Like Laplace approximation, the EP algorithm also approximates the posterior distribution as a Gaussian distribution. For the derivation of the EP predictive distribution, we only need to replace the posterior distribution obtained by Laplace approximation with the approximate posterior obtained by EP, and the remaining derivation is completely identical. The predictive posterior distribution of latent variable {{< math >}}$f^*${{< /math >}}:
+{{< math >}}
+$$
+\text{Mean: }\mathbb{E}_q[f^*|X,y,x^*]=k_*^TK^{-1}\mu=k_*^TK^{-1}(K^{-1}+\tilde{\Sigma}^{-1})^{-1}\tilde{\mu}=k_*^T(K+\tilde{\Sigma})^{-1}\tilde{\mu}\,\,\,\,\,\,\,\,\,\,(17)
+$$
+{{< /math >}}
+{{< math >}}
+$$
+\text{Variance: }\mathbb{V}_q[f^*|X,y,x^*]=k(x^*,x^*)-k_*(K+\tilde{\Sigma})^{-1}k_*\,\,\,\,\,\,\,\,\,\,(18)
+$$
+{{< /math >}}
+From equations (17) and (18), we can obtain the predicted probabilities for binary classification:
+{{< math >}}
+$$
+q(y^*=1|X,y,x^*)=\mathbb{E}_q(\pi^*|X,y,x^*)=\int\Phi(f^*)q(f^*|X,y,x^*)\,\,df^*
+$$
+{{< /math >}}
+where {{< math >}}$q(f^*|X,y,x^*)${{< /math >}} is the predictive distribution of latent variable {{< math >}}$f^*${{< /math >}} with mean (17) and variance (18). By computing the integral on the right-hand side of the equation, we obtain the final required predictive probability: {{< math >}}$q(y^*=1|X,y,x^*)=\Phi(\frac{k_*(K+\tilde{\Sigma})^{-1}\tilde{\mu}}{\sqrt{1+k(x^*,\x^*)-k_*(K+\tilde{\Sigma})^{-1}k_*}})${{< /math >}}
+
+## Conclusion 
+Actually, Gaussian process classification simply replaces the linear model in logistic regression with a Gaussian process. The difficulty lies in the fact that the Gaussian distribution assumption for the target variable y is not valid. The posterior distribution no longer has a closed-form solution, as in the regression problem, and an appropriate approximation is required. The article briefly introduces two commonly used approximation methods: Laplace approximation and expectation propagation. The Laplace method approximates the posterior distribution globally as a Gaussian distribution, which has the advantage of being simple and fast to compute, but has the disadvantage of being very poor in approximating multi-modal posterior distributions. Expectation propagation iteratively updates the posterior distribution of each sample locally, which has the advantage of relatively good approximation performance for any posterior distribution, but the disadvantage of being computationally complex and cannot guarantee the convergence of the global approximation.
+
+Stepping out of this article or Gaussian process discussion, Laplace approximation has a wider range of applications, and I highly recommend everyone to learn about this method itself. You can refer to this blog post - [Laplace's Method](https://gregorygundersen.com/blog/2019/05/08/laplaces-method/). Similarly, expectation propagation is not only applied in the approximation of Gaussian process classification, but also provides a good idea for the approximation of posterior distributions, and plays a very important role in variational inference.
+
+- Reference:
+  * [1] MacKay, David JC. "Introduction to Gaussian processes."NATO ASI series F computer and systems sciences168 (1998): 133-166.
+  * [2] Williams, Christopher KI, and Carl Edward Rasmussen.Gaussian processes for machine learning. Vol. 2. No. 3. Cambridge, MA: MIT press, 2006.
+  * [3] Minka T P. Expectation propagation for approximate Bayesian inference[J]. arXiv preprint arXiv:1301.2294, 2013.
+
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
