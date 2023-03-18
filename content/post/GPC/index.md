@@ -43,13 +43,18 @@ A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d
 {{< math >}}$y${{< /math >}} and the predicted value {{< math >}}$f^*${{< /math >}} is a Gaussian distribution, which has the following form:
 {{< math >}}
 $$
-y,f^*|X,x^*\sim/mathcal{N}(\begin{bmatrix}             y\\            f^*\\          \end{bmatrix}|\,0,\begin{bmatrix}             K_y&k_*\\            k_*&k_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
+y,f^*|X,x^*\sim\mathcal{N}(\begin{bmatrix}             y\\            f^*\\          \end{bmatrix}|\,0,\begin{bmatrix}             K_y&k_*\\            k_*&k_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
 $$
 {{< /math >}}
-{{< math >}}$K_y=K+\sigma_y^2I${{< /math >}}, {{< math >}}$k_*=/mathcal{k}(X,x_*)${{< /math >}}, and {{< math >}}$k_{**}=/mathcal{k}(x^*,\bm{x}^*)${{< /math >}}. {{< math >}}$\sigma_y^*${{< /math >}} is used to model the noise in the observed values. By applying Bayes' theorem to the joint distribution above, we obtain the predictive distribution for {{< math >}}$f^*${{< /math >}}: 
+{{< math >}}$K_y=K+\sigma_y^2I${{< /math >}}, {{< math >}}$k_*=k(X,x_*)${{< /math >}}, and {{< math >}}$k_{**}=k(x^*,x^*)${{< /math >}}. {{< math >}}$\sigma_y^*${{< /math >}} is used to model the noise in the observed values. By applying Bayes' theorem to the joint distribution above, we obtain the predictive distribution for {{< math >}}$f^*${{< /math >}}: 
 {{< math >}}
 $$
-f^*|x_*,X,y\sim/mathcal{N}(f^*|\mu_*,\Sigma_*),\,\,\,\,\mu_*=k_*^TK_y^{-1}y\,\,,\,\Sigma_*=k_{**}-k_*^TK_y^{-1}k_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
+f^*|x_*,X,y\sim\mathcal{N}(f^*|\mu_*,\Sigma_*)
+$$
+{{< /math >}}
+{{< math >}}
+$$
+\text{where}\,\,\mu_*=k_*^TK_y^{-1}y\,\,,\,\Sigma_*=k_{**}-k_*^TK_y^{-1}k_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
 $$
 {{< /math >}}
 You can check the [previous article](https://yyimingucl.github.io/post/gpr/) for more information.
@@ -58,7 +63,7 @@ You can check the [previous article](https://yyimingucl.github.io/post/gpr/) for
 ## 2. Binary Classifcation Problem
 In classification problems, our target variable {{< math >}}$y${{< /math >}} is no longer continuous, but rather discrete: {{< math >}}$y = \{+1, -1\}${{< /math >}}. Clearly, we can no longer assume that {{< math >}}$y|x${{< /math >}} follows a Gaussian distribution as in regression problems. A suitable choice is the Bernoulli distribution {{< math >}}$y|x \sim Bernoulli(\theta): p(y=+1|x) = \theta, p(y=-1|x) = 1-\theta${{< /math >}}, where {{< math >}}$\theta \in [0,1]${{< /math >}}. In fact, once we have a good estimate for {{< math >}}$\theta${{< /math >}}, the classification problem is solved (from a discriminative point of view. Another way of looking at classification problems, called the generative perspective, aims to estimate the joint distribution of {{< math >}}$y${{< /math >}} and {{< math >}}$x${{< /math >}}, which is not discussed here). But how can we estimate {{< math >}}$\theta${{< /math >}}? There are many methods for estimating {{< math >}}$\theta${{< /math >}}, such as linear models (logistic regression), neural networks (convolutional neural networks in image recognition), etc. Our title is Gaussian process classification, so naturally we will discuss how to use Gaussian processes to estimate {{< math >}}$\theta${{< /math >}}.
 
-Can we directly treat {{< math >}}$\theta${{< /math >}} as a regression variable ({{< math >}}$y${{< /math >}}) and use a Gaussian process to obtain {{< math >}}$\theta|x ~ /mathcal{N}(\mu, K)${{< /math >}}. The answer is obviously no. There are two reasons for this: (1) the range of {{< math >}}$\theta${{< /math >}} obtained from the Gaussian process is {{< math >}}$(-\infty,\infty)${{< /math >}}, which does not satisfy the requirement that {{< math >}}$\theta\in[0,1]${{< /math >}}, and (2) although we want to estimate {{< math >}}$\theta${{< /math >}}, we cannot directly observe {{< math >}}$\theta${{< /math >}}. We can only observe {{< math >}}$y${{< /math >}} produced by {{< math >}}$\theta${{< /math >}}. To address the first issue, we can use a response function {{< math >}}$\sigma(\,\cdot\,)${{< /math >}} to compress the results obtained from the Gaussian process into the {{< math >}}$[0,1]${{< /math >}} range. Common response functions include the logistic function and the cumulative probability function of the standard Gaussian distribution (probit function). The figure below shows these two functions, as well as the compressed Gaussian process prior:
+Can we directly treat {{< math >}}$\theta${{< /math >}} as a regression variable ({{< math >}}$y${{< /math >}}) and use a Gaussian process to obtain {{< math >}}$\theta|x \sim\mathcal{N}(\mu, K)${{< /math >}}. The answer is obviously no. There are two reasons for this: (1) the range of {{< math >}}$\theta${{< /math >}} obtained from the Gaussian process is {{< math >}}$(-\infty,\infty)${{< /math >}}, which does not satisfy the requirement that {{< math >}}$\theta\in[0,1]${{< /math >}}, and (2) although we want to estimate {{< math >}}$\theta${{< /math >}}, we cannot directly observe {{< math >}}$\theta${{< /math >}}. We can only observe {{< math >}}$y${{< /math >}} produced by {{< math >}}$\theta${{< /math >}}. To address the first issue, we can use a response function {{< math >}}$\sigma(\,\cdot\,)${{< /math >}} to compress the results obtained from the Gaussian process into the {{< math >}}$[0,1]${{< /math >}} range. Common response functions include the logistic function and the cumulative probability function of the standard Gaussian distribution (probit function). The figure below shows these two functions, as well as the compressed Gaussian process prior:
 ![png](response_function.png)
 
 ## 3. Gaussian Process Classification (GPC)
@@ -73,7 +78,7 @@ Due to the symmetry of the response function: {{< math >}}$\sigma(-z)=1-\sigma(z
 Given the sample {{< math >}}$\{X,y\}${{< /math >}}, the prediction distribution for a new input {{< math >}}$x^*${{< /math >}} can be expressed as:
 {{< math >}}
 $$
-\pi(x^*)=p(y^*=1|X,y,x^*)=\int\sigma(f^*)\underbrace{p(f^*|X,y,x^*)}_{The predictive distributio no latent variable f^* }\,df^*\,\,\,\,\,\,\,\,(1)
+\pi(x^*)=p(y^*=1|X,y,x^*)=\int\sigma(f^*)p(f^*|X,y,x^*)\,df^*\,\,\,\,\,\,\,\,(1)
 $$
 {{< /math >}}
 {{< math >}}
@@ -88,7 +93,7 @@ $$
 The idea of Laplacian approximation is simple: approximate an unknown distribution {{< math >}}$p${{< /math >}} using a Gaussian distribution {{< math >}}$q${{< /math >}}. The question is, **how do we determine the parameters {{< math >}}$\mu${{< /math >}} and {{< math >}}$\Sigma${{< /math >}} of the Gaussian distribution {{< math >}}$q${{< /math >}}?** Let's start by introducing Laplace's method briefly. Suppose we know that a function {{< math >}}$g(x)${{< /math >}} attains its maximum at {{< math >}}$x_0${{< /math >}}, and we want to evaluate the integral {{< math >}}$\int_a^b g(x)dx${{< /math >}}.
 {{< math >}}
 $$
-\begin{split} &\text{Firstly, we define $h(x)=\log(g(x))$}\\ &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &\text{we know $g(x)$ will be maximum at $x_0$ $\Rightarrow h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, then we can get the approximate of desired integral}  \end{split}
+\begin{split} &\text{Firstly, we define $h(x)=\log(g(x))$}\\ &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &\text{we know $g(x)$ will be maximum at $x_0$\\ and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, \\ then we can get the approximate of desired integral}  \end{split}
 $$
 {{< /math >}}
 ### 4.2 Posterior distribution {{< math >}}$p(f|X,y)${{< /math >}}
