@@ -154,7 +154,11 @@ correlation&lt;/p>
 &lt;h3 id="1-two-dimensional-gaussian-distribution">1. Two-dimensional Gaussian distribution&lt;/h3>
 &lt;p>From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that
 $(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)$. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables
-$x_1,x_2$.
+$x_1,x_2$.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -166,7 +170,15 @@ width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>cov(x1,x2)=0&lt;/em>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>cov(x1,x2)=0&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -178,7 +190,16 @@ width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>cov(x1,x2)=0.7&lt;/em>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>cov(x1,x2)=0.7&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -190,15 +211,30 @@ width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>cov(x1,x2)=0.95&lt;/em>&lt;/p>
-&lt;p>As you can see from the graph above, as the correlation between
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>cov(x1,x2)=0.95&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">As you can see from the graph above, as the correlation between
 $x_1,x_2$ gets larger, the values of
 $x_1$ and
 $x_2$ that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample,
 $x_1$ is always equal to
-$x_2$.&lt;/p>
+$x_2$.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;h3 id="2-high-dimensional-gaussian-distribution">2. High-dimensional Gaussian distribution&lt;/h3>
-&lt;p>The simple two-dimensional case was studied, let&amp;rsquo;s now extend to 20 dimensions.
+&lt;p>The simple two-dimensional case was studied, let&amp;rsquo;s now extend to 20 dimensions.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -210,7 +246,15 @@ width="760"
 height="247"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>20-dimensional Gaussian distribution&lt;/em>&lt;/p>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>20-dimensional Gaussian distribution&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;p>The two left figures above, same as in 2D case, are sampled values for
 $(x_1,x_2,...x_{20})$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)&lt;/p>
 &lt;p>What if we fix two random variables and sample again?
@@ -257,7 +301,11 @@ loading="lazy" data-zoomable />&lt;/div>
 $f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))$ where
 $m(\cdot)\,\,,K(\cdot,\cdot)$ are called the mean function and covariance function respectively. By definition in this way, we can get ride of the limitation of the discrete case and the mean and covariance matrix can be calculated for any function
 $f(x)$.&lt;/p>
-&lt;p>From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.
+&lt;p>From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -269,7 +317,15 @@ width="370"
 height="264"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1&lt;/em>&lt;/p>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;p>The figure above shows the 5 functions sampled from the prior distribution of this function. The blue region is
 $\mu\pm\sigma^2$.
 &lt;figure >
@@ -306,7 +362,11 @@ width="760"
 height="512"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.
+The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -318,10 +378,18 @@ width="760"
 height="471"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>Sample from Gaussian Process by squared-exponential covariance function with different parameter L&lt;/em>&lt;/p>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>Sample from Gaussian Process by squared-exponential covariance function with different parameter L&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;h3 id="5-use-gp-for-regression">5. Use GP for regression&lt;/h3>
 &lt;p>Summarizing the above process, a prior is first given for all potential functions by Gaussian process, then, combined with the samples, we obtain the posterior distribution for the function
-$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where
+$f(X)\sim\mathcal{N}(m(X),K(X,X))$ where
 $[K(X,X)]_{ij}=K(x_i,x_j)$.&lt;/p>
 &lt;p>Taken the noise into account, the output function becomes
 $y(X)=f(X)+\sigma^2_yI\,\,,\sigma^2_yI\sim\mathcal{N}(0,1)$ and
@@ -330,16 +398,18 @@ $y(X)\sim\mathcal{N}(m(X),K(X,X)+\sigma^2_y)$.&lt;/p>
 $(X,Y)$, we can see that the parameters are only finite dimensional (the mean is a vector of length n and the covariance matrix is n*n), so does this result contradict or behave inconsistently with the infinite dimensionality?&lt;/strong>&lt;/p>
 &lt;h3 id="6-consistency-and-marginalisation-property">6. Consistency and Marginalisation Property&lt;/h3>
 &lt;p>Both of these problems can be solved perfectly by the &lt;strong>Marginalisation Property&lt;/strong> of the Gaussian distribution. For Multivariate Gaussian distribution:
-$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} a\\ b\end{matrix}\right),\left(\begin{matrix} A &amp;B\\ B^T&amp;C \end{matrix}\right))\Rightarrow P(Y_1)\sim N(a, A)$$
+$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} a\\ b\end{matrix}\right),\left(\begin{matrix} A &amp;B\\ B^T&amp;C \end{matrix}\right))$$
+$$\Rightarrow P(Y_1)\sim N(a, A)$$
 With this property means that we can split only the part of our interest (samples and predictions) from the entire infinite dimensional Gaussian distribution and ignore these parts are not in our interest (no need to interpolation/extrapolation). This property is then used to derive for the distribution of our part of interest. 1. For the first problem, we just need to keep the multivariate Gaussian distribution of the sample part in the computer. 2. For the second problem, it can be seen from the above properties that the parameters of the marginal distribution obtained by partitioning the whole Gaussian distribution are also part of the parameters of the whole Gaussian distribution (or saying derived from the parameters of the infinite-dimensional distribution), thus ensuring consistency with the results of the Gaussian process.&lt;/p>
 &lt;h3 id="7-prediction">7. Prediction&lt;/h3>
 &lt;p>Assume
 $Y_1$ is the sample value,
 $Y_2$ is the predicted value and
-$m(x)=0$. By the definition of Gaussian Process,
-$$\Rightarrow P(Y_1(X),Y_2(X))\sim N(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&amp;K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&amp;K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
-$$\Rightarrow P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$$
-$$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$$
+$m(x)=0$. By the definition of Gaussian Process:
+$$P(Y_1(X),Y_2(X))\sim \mathcal{N}(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&amp;K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&amp;K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
+$P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$. Then we have:
+$$P(Y_2|Y_1) \sim \mathcal{N}(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,$$
+$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -356,8 +426,10 @@ loading="lazy" data-zoomable />&lt;/div>
 $Y_2$ given the sample
 $Y_1$. Looking at these two parameters separately,&lt;/p>
 &lt;ul>
-&lt;li>the covariance of the conditional probability:
-$\Sigma_{Y_2|Y_1}=K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})\Leftrightarrow$ predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples.
+&lt;li>the covariance of the conditional probability
+$\Sigma_{Y_2|Y_1}=$
+$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})$
+$\Leftrightarrow$ predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples.
 $K(X_{Y_2},X_{Y_2})$ is derived from the covaraince function
 $K(x_i,x_j)$ given in the previous definition of the prior, computed from the given inputs, so it can be seen as uncertainty in the prior.
 $K(X_{Y_1},X_{Y_2})$ is obtained from the inputs corresponding to the predicted values
@@ -373,7 +445,11 @@ $\Rightarrow$ Lower uncertainty of the predicition.&lt;/li>
 &lt;/ul>
 &lt;p>The mean of marginal distribution:
 $$
-\mu_{Y_2|Y_1}=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\ =\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\ (\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+\begin{split}
+\mu_{Y_2|Y_1}&amp;=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\
+&amp;=\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\
+&amp;(\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+\end{split}
 $$
 It is worth noting that the mean of the entire predictive distribution can be seen as a weighted average of the sample outputs Y1 (in general, the more relevant the sample, the larger the corresponding weight). Also this form coincides with the dual form of L2 regression.&lt;/p>
 &lt;h3 id="8-weight-space">8. Weight Space&lt;/h3>
