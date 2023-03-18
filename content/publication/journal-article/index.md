@@ -3,7 +3,7 @@ title: "Traffic4cast at NeurIPS 2021 – Temporal and Spatial Few-Shot Transfer 
 authors:
 - Christian Eichenberger
 - Moritz Neun
-- Henry Martin
+- et al.
 date: "2022-02-12T00:00:00Z"
 doi: ""
 
