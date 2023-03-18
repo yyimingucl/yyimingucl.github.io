@@ -189,6 +189,37 @@ p(y_i|f_i) \simeq t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\tilde{Z
 $$
 {{< /math >}}
 where {{< math >}}$\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i${{< /math >}} is called the site parameters for approximating the likelihood of sample {{< math >}}$i${{< /math >}}, it is interesting to note that we are using an unnormalized Gaussian distribution of fi to approximate a Gaussian distribution of {{< math >}}$y_i${{< /math >}}. Upon careful consideration, this approximation is reasonable. We can consider the likelihood {{< math >}}$p(y_i|f_i)${{< /math >}} as a conditional probability distribution of {{< math >}}$y_i${{< /math >}} given {{< math >}}$f_i${{< /math >}}. Since {{< math >}}$y_i${{< /math >}} is fixed, we are more concerned about {{< math >}}$f_i${{< /math >}} and want to know how {{< math >}}$f_i${{< /math >}} affects or explains our target value {{< math >}}$y_i${{< /math >}}. In other words, if the likelihood is a function of {{< math >}}$f_i${{< /math >}}, we are more interested in how the likelihood changes with {{< math >}}$f_i${{< /math >}}. (In regression problems, the distribution of {{< math >}}$y_i|f_i${{< /math >}} is also determined by the selected distribution of {{< math >}}$f_i${{< /math >}}. The difference is that in regression problems, we can directly calculate the distribution of {{< math >}}$y_i|f_i${{< /math >}}, while in classification problems, an approximation is needed.) Since the approximate likelihood of each sample is Gaussian, we can obtain: {{< math >}}$\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\tilde{\bm{\mu}},\tilde{\Sigma})\prod_i\tilde{Z}_i${{< /math >}} where {{< math >}}$\tilde{\bm{\mu}}=(\tilde{\mu}_1,...,\tilde{\mu}_n)\,\,\text{and}\,\,\tilde{\Sigma}\,\,\text{is diagnoal}\,\,\tilde{\Sigma}_{ii}=\tilde{\sigma}^2_i${{< /math >}}
+
+Then we will define the approximate distribution {{< math >}}$q(f|X,y)${{< /math >}}:
+{{< math >}}
+$$
+\begin{split} &q(f|X,y)=\frac{1}{Z_{EP}}p(f|X)\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\mu,\Sigma)\\ &\text{with}\,\,\mu=\Sigma\tilde{\Sigma}^{-1}\tilde{\mu},\,\,\text{and}\,\,\Sigma=(K^{-1}+\tilde{\Sigma}^{-1})^{-1} \end{split}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(12)
+$$
+{{< /math >}}
+It is important to note that {{< math >}}$\tilde{\mu},\tilde{\Sigma}${{< /math >}} are the parameters of the local likelihood approximation, while {{< math >}}$\mu,\Sigma${{< /math >}} are the parameters of the global approximate posterior distribution {{< math >}}$q${{< /math >}}, and {{< math >}}$Z_{EP}${{< /math >}} is the normalization constant obtained from the EP algorithm. After defining all of the above, the core problem that the EP algorithm solves arises: **how should we choose the parameters of the local approximate distribution {{< math >}}$t_i${{< /math >}}: {{< math >}}$\tilde{\mu}_i,\tilde{\sigma}_i, \tilde{Z}_i${{< /math >}}?** The main idea of the entire EP algorithm is to update each {{< math >}}$t_i${{< /math >}} sequentially. In general, the EP method iterates through the following four steps:
+1. By removing the likelihood {{< math >}}$t_i${{< /math >}} of the sample {{< math >}}$(x_i,y_i)${{< /math >}}, We compute the marginal distribution of {{< math >}}$f_i${{< /math >}} from the current approximate posterior distribution {{< math >}}$q(f_i|X,y)${{< /math >}}, denoted as {{< math >}}$q_{-i}(f_i)${{< /math >}}. Since it looks like we dig a 'hole' around the sample, the distribution {{< math >}}$q_{-i}(f_i)${{< /math >}} is called 'cavity' distribution. 
+2. We replace the approximate likelihood {{< math >}}$t_i${{< /math >}} by the true likelihood {{< math >}}$p(y_i|f_i)${{< /math >}} to fill the 'hole', thereby obtaining a new marginal distribution {{< math >}}$q_{-i}(fi)p(y_i|f_i)${{< /math >}} about {{< math >}}$f_i${{< /math >}}.
+3. The marginal distribution obtained in the second step is not a Gaussian distribution, so we need to find an approximate Gaussian distribution {{< math >}}$\hat{q}(f_i)${{< /math >}} for it.
+4. In the final step, we calculate the parameters of the approximate likelihood {{< math >}}$t_i (\hat{q}(f_i) = t_iq_{-i}(f_i))${{< /math >}}, where  {{< math >}}$\hat{q}(f_i)${{< /math >}} and {{< math >}}$q_{-i}(f_i)${{< /math >}} are known through steps 1 and 3.
+
+Below we will explain these four steps one by one:
+
+The goal of EP is to optimize the local approximation {{< math >}}$t_i${{< /math >}} one by one based on the existing local approximations {{< math >}}$\{t_j\}_{j\neq i}${{< /math >}}. Consider what information is useful for constructing the posterior distribution {{< math >}}$f_i${{< /math >}}: 1. The prior {{< math >}}$p(f_i|X)${{< /math >}}. 2. The local approximation distribution {{< math >}}$\{t_j\}_{j\neq i}${{< /math >}} for each sample. 3. The true likelihood {{< math >}}$p(y_i|f_i) = \sigma(y_if_i)${{< /math >}} for sample {{< math >}}$i${{< /math >}}. Our goal is to integrate all this information to construct the required approximate distribution. First, we combine the prior with the likelihoods of other samples (except sample {{< math >}}$i${{< /math >}}) to obtain the cavity distribution {{< math >}}$q_{-i}(f_i)${{< /math >}}:
+{{< math >}}
+$$
+q_{-i}(f_i)\propto\int p(f|X)\prod_{j\neq i}t_j(f_j|\tilde{Z}_j,\tilde{\mu}_j,\tilde{\sigma}^2_j)\,df_j\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(13)
+$$
+{{< /math >}}
+Afterwards, the true likelihood of sample i will be combined with (13). To compute {{< math >}}$q_{-i}(f_i)\,\,(13)${{< /math >}}, we need to take two steps:
+1. Marginalize {{< math >}}$f_i${{< /math >}} from the approximate distribution of the overall {{< math >}}$q(f|X,y)${{< /math >}} to obtain {{< math >}}$q(f_i|X,y)${{< /math >}}. There are two points to note here: (1) {{< math >}}$q(f|X,y)${{< /math >}} is a Gaussian distribution, and through the marginal property of the Gaussian distribution, we can easily obtain {{< math >}}$q(f_i|X,y)=\mathcal{N}(f_i|\mu_i,\sigma_i^2)${{< /math >}} where {{< math >}}$\sigma^2=\Sigma_{ii} (\Sigma in (12))${{< /math >}}. (2) The {{< math >}}$q(f_i|X,y)${{< /math >}} obtained here does not remove {{< math >}}$t_i${{< /math >}}
+{{< math >}}
+$$
+q(f_i|X,y)=\int p(f|X)t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma^2_i})\prod_{j\neq i}t_j(f_j|\tilde{Z}_j,\tilde{\mu}_j,\tilde{\sigma}^2_j)\,df_j
+$$
+{{< /math >}}
+
+
+
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
