@@ -138,12 +138,16 @@ $\sigma(\,\cdot\,)$ has many choices. Below are the logarithmic forms, first-ord
 /post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/derivative_of_sigma_hu620a89f6cbf6511ff5e2985f3b4f6391_27945_672e589c4109371306c5811ea82d4a2e.webp width=579 height=153 loading=lazy data-zoomable></div></div></figure></th></tr></thead><tbody><tr><td style=text-align:center><em>Table from [2]. The first row is for the logistic function and the second is for the probit function.</em></td></tr><tr><td style=text-align:center>In the case of
 $f = \hat{f}$, our first-order derivative
 $(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
-$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it. Here, we can use Newton&rsquo;s method for iteration:</td></tr><tr><td style=text-align:center>$$
+$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it.</td></tr></tbody></table><p>Here, we can use Newton&rsquo;s method for iteration:
+$$
 \begin{split} f^{\text{new}}=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi&=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\ &=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f)) \end{split}
-$$</td></tr><tr><td style=text-align:center>After finding
-$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&rsquo;s approximation:</td></tr><tr><td style=text-align:center>$$
-q(\bm{f}|\bm{X},\bm{y})=\mathcal{N}(\bm{\hat{f}},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
-$$</td></tr><tr><td style=text-align:center>The biggest drawback of using Laplace&rsquo;s approximation is that the approximate distribution
+$$
+After finding
+$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&rsquo;s approximation:
+$$
+q(f|X,y)=\mathcal{N}(\hat{f},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
+$$
+The biggest drawback of using Laplace&rsquo;s approximation is that the approximate distribution
 $q$ we obtain may differ greatly from the true distribution
 $p$. This is because we only use the mean
 $\mu$ and covariance
@@ -152,9 +156,21 @@ $p$ distribution as parameters of the Gaussian distribution
 $q$. However, this information may (1) be far from sufficient to fully describe the distribution
 $p$ or (2) not correctly reflect the characteristics of the distribution
 $p$, such as if
-$p$ is a long-tail distribution or a multi-modal distribution.</td></tr><tr><td style=text-align:center><figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
+$p$ is a long-tail distribution or a multi-modal distribution.
+|<figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
 /post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_11f2f52097b907d18ee101f0986a7c2c.webp 760w,
-/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp width=760 height=349 loading=lazy data-zoomable></div></div></figure></td></tr><tr><td style=text-align:center>:&ndash;:</td></tr><tr><td style=text-align:center><em>Laplace&rsquo;s approximation: (left) using Laplace&rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&rsquo;s approximation for a unimodal distribution p will result in a good approximation q.</em></td></tr></tbody></table><!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp width=760 height=349 loading=lazy data-zoomable></div></div></figure>|
+|<em>Laplace&rsquo;s approximation: (left) using Laplace&rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&rsquo;s approximation for a unimodal distribution p will result in a good approximation q.</em>|</p><h3 id=43-predication>4.3 Predication</h3><p>By using Laplace&rsquo;s approximation, we can substitute the approximate posterior distribution
+$q(f|X,y)$ (equation 7) into the predictive mean (Recap 2) of the regression problem, and obtain the mean of the predictive distribution for a new input
+$x^*$:
+$$
+\mathbb{E}_q(f^*|X,y,x^*)=k_*^TK^{-1}k_*=k_*^T\nabla\log p(y|\hat{f})\,\,\,\,\,\,\,\,\,\,\,(8)
+$$
+If we carefully observe equation (8), we can express the expectation of the approximate distribution
+$q$ as:
+$$
+\mathbb{E}_q(f^*|X,y,x^*)=\sum_{i=1}^nk(x^*,x_i)\nabla\log p(y_i|\hat{f}_i)
+$$</p><!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 

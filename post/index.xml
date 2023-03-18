@@ -178,28 +178,20 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;td style="text-align:center">In the case of
 $f = \hat{f}$, our first-order derivative
 $(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
-$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it. Here, we can use Newton&amp;rsquo;s method for iteration:&lt;/td>
+$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it.&lt;/td>
 &lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">
+&lt;/tbody>
+&lt;/table>
+&lt;p>Here, we can use Newton&amp;rsquo;s method for iteration:
 $$
 \begin{split} f^{\text{new}}=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi&amp;=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\ &amp;=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f)) \end{split}
 $$
-&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">After finding
-$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&amp;rsquo;s approximation:&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">
+After finding
+$\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&amp;rsquo;s approximation:
 $$
-q(\bm{f}|\bm{X},\bm{y})=\mathcal{N}(\bm{\hat{f}},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
+q(f|X,y)=\mathcal{N}(\hat{f},(K^{-1}+W)^{-1})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(7)
 $$
-&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">The biggest drawback of using Laplace&amp;rsquo;s approximation is that the approximate distribution
+The biggest drawback of using Laplace&amp;rsquo;s approximation is that the approximate distribution
 $q$ we obtain may differ greatly from the true distribution
 $p$. This is because we only use the mean
 $\mu$ and covariance
@@ -208,10 +200,8 @@ $p$ distribution as parameters of the Gaussian distribution
 $q$. However, this information may (1) be far from sufficient to fully describe the distribution
 $p$ or (2) not correctly reflect the characteristics of the distribution
 $p$, such as if
-$p$ is a long-tail distribution or a multi-modal distribution.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">
+$p$ is a long-tail distribution or a multi-modal distribution.
+|
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -223,16 +213,21 @@ width="760"
 height="349"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">&lt;em>Laplace&amp;rsquo;s approximation: (left) using Laplace&amp;rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&amp;rsquo;s approximation for a unimodal distribution p will result in a good approximation q.&lt;/em>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
+|
+|&lt;em>Laplace&amp;rsquo;s approximation: (left) using Laplace&amp;rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&amp;rsquo;s approximation for a unimodal distribution p will result in a good approximation q.&lt;/em>|&lt;/p>
+&lt;h3 id="43-predication">4.3 Predication&lt;/h3>
+&lt;p>By using Laplace&amp;rsquo;s approximation, we can substitute the approximate posterior distribution
+$q(f|X,y)$ (equation 7) into the predictive mean (Recap 2) of the regression problem, and obtain the mean of the predictive distribution for a new input
+$x^*$:
+$$
+\mathbb{E}_q(f^*|X,y,x^*)=k_*^TK^{-1}k_*=k_*^T\nabla\log p(y|\hat{f})\,\,\,\,\,\,\,\,\,\,\,(8)
+$$
+If we carefully observe equation (8), we can express the expectation of the approximate distribution
+$q$ as:
+$$
+\mathbb{E}_q(f^*|X,y,x^*)=\sum_{i=1}^nk(x^*,x_i)\nabla\log p(y_i|\hat{f}_i)
+$$
+&lt;/p>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
