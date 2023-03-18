@@ -43,16 +43,32 @@ A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d
 {{< math >}}$y${{< /math >}} and the predicted value {{< math >}}$f^*${{< /math >}} is a Gaussian distribution, which has the following form:
 {{< math >}}
 $$
-\bm{y},\bm{f}^*|\bm{X},\bm{x}^*\sim\mathcal{N}(\begin{bmatrix}             \bm{y}\\            \bm{f}^*\\          \end{bmatrix}|\,\bm{0},\begin{bmatrix}             \bm{K_y}&\bm{k}_*\\            \bm{k}_*&\bm{k}_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
+y,f^*|X,x^*\sim\mathcal{N}(\begin{bmatrix}             y\\            f^*\\          \end{bmatrix}|\,0,\begin{bmatrix}             K_y&k_*\\            k_*&k_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
 $$
 {{< /math >}}
-{{< math >}}$\bm{K}_y=\bm{K}+\sigma_y^2\bm{I}${{< /math >}}, {{< math >}}$\bm{k}_*=\mathcal{k}(\bm{X},\bm{x}_*)${{< /math >}}, and {{< math >}}$\bm{k}_{**}=\mathcal{k}(\bm{x}^*,\bm{x}^*)${{< /math >}}. {{< math >}}$\sigma_y^*${{< /math >}} is used to model the noise in the observed values. By applying Bayes' theorem to the joint distribution above, we obtain the predictive distribution for {{< math >}}$f^*${{< /math >}}: 
+{{< math >}}$K_y=K+\sigma_y^2I${{< /math >}}, {{< math >}}$k_*=\mathcal{k}(X,x_*)${{< /math >}}, and {{< math >}}$k_{**}=\mathcal{k}(x^*,\bm{x}^*)${{< /math >}}. {{< math >}}$\sigma_y^*${{< /math >}} is used to model the noise in the observed values. By applying Bayes' theorem to the joint distribution above, we obtain the predictive distribution for {{< math >}}$f^*${{< /math >}}: 
 {{< math >}}
 $$
-\bm{f}^*|\bm{x}_*,\bm{X},\bm{y}\sim\mathcal{N}(\bm{f}^*|\bm{\mu}_*,\bm{\Sigma}_*),\,\,\,\,\bm{\mu}_*=\bm{k}_*^T\bm{K}_y^{-1}\bm{y}\,\,,\,\bm{\Sigma}_*=\bm{k}_{**}-\bm{k}_*^T\bm{K}_y^{-1}\bm{k}_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
+f^*|x_*,X,y\sim\mathcal{N}(f^*|\mu_*,\Sigma_*),\,\,\,\,\mu_*=k_*^TK_y^{-1}y\,\,,\,\Sigma_*=k_{**}-k_*^TK_y^{-1}k_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
 $$
 {{< /math >}}
 You can check the [previous article](https://yyimingucl.github.io/post/gpr/) for more information.
+
+
+### 2. Binary Classifcation Problem
+In classification problems, our target variable {{< math >}}$y${{< /math >}} is no longer continuous, but rather discrete: {{< math >}}$y = \{+1, -1\}${{< /math >}}. Clearly, we can no longer assume that {{< math >}}$y|x${{< /math >}} follows a Gaussian distribution as in regression problems. A suitable choice is the Bernoulli distribution {{< math >}}$y|x \sim Bernoulli(\theta): p(y=+1|x) = \theta, p(y=-1|x) = 1-\theta${{< /math >}}, where {{< math >}}$\theta \in [0,1]${{< \math >}}. In fact, once we have a good estimate for {{< math >}}$\theta${{< math >}}, the classification problem is solved (from a discriminative point of view. Another way of looking at classification problems, called the generative perspective, aims to estimate the joint distribution of {{< math >}}$y${{< \math >}} and {{< math >}}$x${{< \math >}}, which is not discussed here). But how can we estimate {{< math >}}$\theta${{< \math >}}? There are many methods for estimating {{< math >}}$\theta${{< \math >}}, such as linear models (logistic regression), neural networks (convolutional neural networks in image recognition), etc. Our title is Gaussian process classification, so naturally we will discuss how to use Gaussian processes to estimate {{< math >}}$\theta${{< \math >}}.
+
+Can we directly treat {{< math >}}$\theta${{< \math >}} as a regression variable ({{< math >}}$y${{< \math >}}) and use a Gaussian process to obtain {{< math >}}$\theta|x ~ \mathcal{N}(\mu, K)${{< /math >}}. The answer is obviously no. There are two reasons for this: (1) the range of {{< math >}}$\theta${{< \math >}} obtained from the Gaussian process is {{< math >}}$(-\infty,\infty)${{< \math >}}, which does not satisfy the requirement that {{< math >}}$\theta\in[0,1]${{< \math >}}, and (2) although we want to estimate {{< math >}}$\theta${{< \math >}}, we cannot directly observe {{< math >}}$\theta${{< \math >}}. We can only observe {{< math >}}$y${{< \math >}} produced by {{< math >}}$\theta${{< \math >}}. To address the first issue, we can use a response function {{< math >}}$\sigma(\,\cdot\,)${{< \math >}} to compress the results obtained from the Gaussian process into the {{< math >}}$[0,1]${{< \math >}} range. Common response functions include the logistic function and the cumulative probability function of the standard Gaussian distribution (probit function). The figure below shows these two functions, as well as the compressed Gaussian process prior:
+![png](response_function.png)
+
+### 3. Gaussian Process Classification (GPC)
+For distinctions, we denote the regression variable of the Gaussian process as the (latent) variable {{< math >}}$f: f|x \sim \mathcal{N}(\mu, K)${{< /math >}}. With the response function {{< math >}}$\sigma${{< \math >}} introduced in the previous paragraph, we can obtain the likelihood function. For a sample {{< math >}}$(xi, yi)${{< /math >}}, their likelihood is given by: 
+{{< math >}}
+$$
+\begin{equation} p(y_i|x_i,f_i)=\left\{ \begin{array}{ll}       \sigma(f_i(x_i)), & y_i=+1 \\       1-\sigma(f_i(x_i)), & y_i=-1 \\ \end{array}  \right.  \end{equation}
+$$
+{{< /math >}}
+Due to the symmetry of the response function: {{< math >}}$\sigma(-z)=1-\sigma(z)${{< /math >}}, the likelihood can be expressed more concisely as {{< math >}}$p(y_i|x_i,f_i)=\sigma(y_if_i(x_i))${{< /math >}}. It's interesting that for the latent variable f, we don't observe its value (only observe input {{< math >}}${x_i}_i${{< /math >}} and target values {{< math >}}${y_i}_i${{< /math >}}) and we are not interested in it at all. The existence of {{< math >}}$f${{< /math >}} is only for the convenience of modeling discrete y and making the model structure clearer. What we are really interested in is {{< math >}}$\pi(x) = p(y=1|x)${{< /math >}}, especially for new input {{< math >}}$x^*${{< /math >}}, and note that {{< math >}}$\pi(x)${{< /math >}} no longer depends on {{< math >}}$f${{< /math >}}. So how do we remove this dependence?
 
 
 
