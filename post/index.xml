@@ -193,9 +193,6 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
-&lt;/tr>
-&lt;tr>
 &lt;td style="text-align:center">&lt;em>cov(x1,x2)=0.7&lt;/em>&lt;/td>
 &lt;/tr>
 &lt;tr>
@@ -212,9 +209,6 @@ height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">:&amp;ndash;:&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td style="text-align:center">&lt;em>cov(x1,x2)=0.95&lt;/em>&lt;/td>
@@ -409,7 +403,7 @@ $m(x)=0$. By the definition of Gaussian Process:
 $$P(Y_1(X),Y_2(X))\sim \mathcal{N}(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&amp;K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&amp;K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
 $P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$. Then we have:
 $$P(Y_2|Y_1) \sim \mathcal{N}(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,$$
-$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$
+$$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$$
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
