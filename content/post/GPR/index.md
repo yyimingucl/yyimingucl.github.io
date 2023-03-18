@@ -33,28 +33,15 @@ authors:
 ---
 
 
-## Introduction
+# Overview
 
-In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as 'finding a function mapping from input {{< math >}}$x${{< math >}} to output {{< math >}}$y${{< math >}}'. However, compared to regression problems, Gaussian processes encounter many challenging issues when dealing with classification problems. This article will elucidate these issues and provide corresponding solutions.
+In regression problem, we are actually looking for a function that maps input {{< math >}}$x${{< /math >}} to output {{< math >}}$y${{< /math >}}. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,...) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample {{< math >}}$(X, Y)${{< /math >}} more closely (greater likelihood). The problem with this method is that it needs to consider an infinite number of functions, but this is not possible and thus requires the use of the Gaussian process in the title.
 
+Firstly, I will give the definition of [Gaussian Process](https://en.wikipedia.org/wiki/Gaussian_process) from wikipedia: A Gaussian process is a stochastic process (a collection of random variables indexed by time or space) such that every finite collection of those random variables forms a multivariate normal distribution. Remark: **Every finite collection of those random variables forms a multivariate normal distribution**. This property will be our panacea for any upcoming troubles!
+correlation
 
-### 1. Review: Gaussian Process Regression
-A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d${{< math >}} is assigned a random variable {{< math >}}$f${{< math >}} and the joint distribution of these variables follows a Gaussian distribution {{< math >}}$f|x\sim\mathcal{N}(\mu,K)${{< math >}}. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function {{< math >}}$\mu${{< math >}} and the covariance {{< math >}}$K=k(X,X)${{< math >}} where k is a parameterized kernel function. For {{< math >}}$\mu${{< math >}}, we generally set it to 0 (ie. {{< math >}}$\mu(\,\cdot\,)=0${{< math >}}). Given a set of input values {{< math >}}$X${{< math >}} and their corresponding noisy observations {{< math >}}$y${{< math >}}, we want to predict the function value {{< math >}}$f^*${{< math >}} at the new point {{< math >}}$x^*${{< math >}}. The joint distribution of the observed values
-{{< math >}}$y${{< math >}} and the predicted value {{< math >}}$f^*${{< math >}} is a Gaussian distribution, which has the following form:
-{{< math >}}
-$$
-\bm{y},\bm{f}^*|\bm{X},\bm{x}^*\sim\mathcal{N}(\begin{bmatrix}             \bm{y}\\            \bm{f}^*\\          \end{bmatrix}|\,\bm{0},\begin{bmatrix}             \bm{K_y}&\bm{k}_*\\            \bm{k}_*&\bm{k}_{**}\\          \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
-$$
-{{< math >}}
-
-
-
-
-
-
-
-
-<!-- From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that {{< math >}}$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)${{< /math >}}. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables {{< math >}}$x_1,x_2${{< /math >}}.
+### 1. Two-dimensional Gaussian distribution
+From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that {{< math >}}$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)${{< /math >}}. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables {{< math >}}$x_1,x_2${{< /math >}}.
 ![png](2d_gaussian_cov0.png)
 *cov(x1,x2)=0*
 ![png](2d_gaussian_cov0.7.png)
@@ -144,7 +131,7 @@ For a Gaussian distribution, mode = mean, so we obtain the maximum a posteriori 
 - Reference:
   * [1] C.E.Rasmussen&C.K.I Williams, Gaussian Process for Machine Learning (GPML), 2006
   * [2] CM.Bishop, Pattern Recognition and Machine Learning (PRML), 2006
-  * [3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013 -->
+  * [3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
