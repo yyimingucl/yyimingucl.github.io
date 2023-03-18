@@ -306,6 +306,40 @@ From the graph, we can see that the variance of the posterior distribution is th
 $\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$, to determine whether to use equation (10). Similarly, due to the existence of
 $\sigma(f^*)$, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of
 $\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/p>
+&lt;h2 id="5-expectation-propagation---ep">5. Expectation Propagation - EP&lt;/h2>
+&lt;ul>
+&lt;li>In this derivation, the response function
+$\sigma$ used is the cumulative probability function
+$\Phi$ (probit function) of the standard normal distribution:
+$p(y_i|f_i) = \Phi(f_i y_i)$&lt;/li>
+&lt;/ul>
+&lt;h3 id="51-introduction">5.1 Introduction&lt;/h3>
+&lt;p>Compared to the global approximation of Laplace&amp;rsquo;s method, Expectation Propagation (EP) updates the global approximation by iterating through and updating each local approximation until convergence. First, we decompose the likelihood:
+$$
+p(f|X,y)=\frac{1}{Z}p(f|X)\prod_{i=1}^np(y_i|f_i)，Z=p(y|X)=\int p(f|X)\prod_{i=1}^np(y_i|f_i)\,df
+$$
+For the non-Gaussian likelihood of each sample, we make the following approximation:
+$$
+p(y_i|f_i) \simeq t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\tilde{Z}_i\mathcal{N}(f_i|\tilde{\mu}_i,\tilde{\sigma}_i^2)\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(11)
+$$
+where
+$\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i$ is called the site parameters for approximating the likelihood of sample
+$i$, it is interesting to note that we are using an unnormalized Gaussian distribution of fi to approximate a Gaussian distribution of
+$y_i$. Upon careful consideration, this approximation is reasonable. We can consider the likelihood
+$p(y_i|f_i)$ as a conditional probability distribution of
+$y_i$ given
+$f_i$. Since
+$y_i$ is fixed, we are more concerned about
+$f_i$ and want to know how
+$f_i$ affects or explains our target value
+$y_i$. In other words, if the likelihood is a function of
+$f_i$, we are more interested in how the likelihood changes with
+$f_i$. (In regression problems, the distribution of
+$y_i|f_i$ is also determined by the selected distribution of
+$f_i$. The difference is that in regression problems, we can directly calculate the distribution of
+$y_i|f_i$, while in classification problems, an approximation is needed.) Since the approximate likelihood of each sample is Gaussian, we can obtain:
+$\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\tilde{\bm{\mu}},\tilde{\Sigma})\prod_i\tilde{Z}_i$ where
+$\tilde{\bm{\mu}}=(\tilde{\mu}_1,...,\tilde{\mu}_n)\,\,\text{and}\,\,\tilde{\Sigma}\,\,\text{is diagnoal}\,\,\tilde{\Sigma}_{ii}=\tilde{\sigma}^2_i$&lt;/p>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
