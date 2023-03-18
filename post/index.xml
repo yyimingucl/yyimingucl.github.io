@@ -257,7 +257,7 @@ $$
 $$
 Referring to the second column in the table above, we can see that for a positive sample
 $(y_i=+1), \nabla\log p(y_i|f^i)\ge0$. Similarly, a negative sample will result in
-$\nalba\log p(y_i|f^i)\le0$. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of
+$\nabla\log p(y_i|f_i)\le0$. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of
 $E_q$. If
 $x^*$ is very similar to a positive sample
 $x_i$ (
@@ -267,7 +267,7 @@ $\Rightarrow k(x^*,x_i)\nabla\log p(y_i|f^i)$ will pull
 $E_q$ towards a positive value. Conversely, if it is a negative sample,
 $E_q$ will be pulled towards a negative value. The whole principle is very similar to the support vector machine method (kernel), except that we replace the product of the coefficient and label
 $c_iy_i$ with
-\nabla\log p(y_i|f_i)$.&lt;/p>
+$\nabla\log p(y_i|f_i)$.&lt;/p>
 &lt;p>At the same time, we can notice that for a sample
 $(x_i,y_i)$ that is easy to classify or can be well-explained by our model, its likelihood will approach 1,
 $p(y_i|f_i)\to1$ and its logarithmic likelihood approaches 0,
@@ -278,7 +278,7 @@ $y^*$. This is also very similar to the non-support vector in support vector mac
 $x^*$ only, we can directly use the response function to &amp;ldquo;squeeze&amp;rdquo; the
 $E_q$ obtained in Equation (8) into the range
 $[0,1]$ to obtain the probability of
-$y^*=1, \pi^(x^*)=\sigma(E_q(f^*|X,y,x^*))$. Since we are discussing a binary classification problem, we can simply classify as follows:
+$y^*=1, \pi(x^*)=\sigma(E_q(f^*|X,y,x^*))$. Since we are discussing a binary classification problem, we can simply classify as follows:
 $$
 \begin{equation}y^*=\left\{ \begin{array}{ll} 1 &amp; \hat{\pi}(x^*)\ge\frac{1}{2} \\ -1 &amp; \hat{\pi}(x^*)&lt;\frac{1}{2} \\ \end{array} \right. \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(9)\end{equation}
 $$
@@ -304,8 +304,11 @@ $f^*$ and obtains
 $\pi(x^*)$ that is much smaller than
 $\pi(x^*)$. At this point, we can reject the classification result to avoid serious consequences caused by misclassification. The corresponding situation on the right figure is that
 $\pi(x^*)$ is approximately equal to
-$\pi(x^*)$, and we can confidently use the MAP prediction result.
-|
+$\pi(x^*)$, and we can confidently use the MAP prediction result.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -317,12 +320,21 @@ width="760"
 height="342"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-|
-|&lt;em>(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.&lt;/em>|
-From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution,
-$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$, to determine whether to use equation (10). Similarly, due to the existence of
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution,
+$\mathbb{V}_q(f^*|X,y,x^*)$, to determine whether to use equation (10). Similarly, due to the existence of
 $\sigma(f^*)$, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of
-$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/p>
+$\mathbb{V}_q(f^*|X,y,x^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;h2 id="5-expectation-propagation---ep">5. Expectation Propagation - EP&lt;/h2>
 &lt;ul>
 &lt;li>In this derivation, the response function
@@ -333,7 +345,10 @@ $p(y_i|f_i) = \Phi(f_i y_i)$&lt;/li>
 &lt;h3 id="51-introduction">5.1 Introduction&lt;/h3>
 &lt;p>Compared to the global approximation of Laplace&amp;rsquo;s method, Expectation Propagation (EP) updates the global approximation by iterating through and updating each local approximation until convergence. First, we decompose the likelihood:
 $$
-p(f|X,y)=\frac{1}{Z}p(f|X)\prod_{i=1}^np(y_i|f_i)，Z=p(y|X)=\int p(f|X)\prod_{i=1}^np(y_i|f_i)\,df
+p(f|X,y)=\frac{1}{Z}p(f|X)\prod_{i=1}^np(y_i|f_i)
+$$
+$$
+Z=p(y|X)=\int p(f|X)\prod_{i=1}^np(y_i|f_i)\,df
 $$
 For the non-Gaussian likelihood of each sample, we make the following approximation:
 $$
@@ -355,8 +370,8 @@ $f_i$. (In regression problems, the distribution of
 $y_i|f_i$ is also determined by the selected distribution of
 $f_i$. The difference is that in regression problems, we can directly calculate the distribution of
 $y_i|f_i$, while in classification problems, an approximation is needed.) Since the approximate likelihood of each sample is Gaussian, we can obtain:
-$\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\tilde{\bm{\mu}},\tilde{\Sigma})\prod_i\tilde{Z}_i$ where
-$\tilde{\bm{\mu}}=(\tilde{\mu}_1,...,\tilde{\mu}_n)\,\,\text{and}\,\,\tilde{\Sigma}\,\,\text{is diagnoal}\,\,\tilde{\Sigma}_{ii}=\tilde{\sigma}^2_i$&lt;/p>
+$\prod_{i=1}^nt_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma}^2_i)=\mathcal{N}(\tilde{\mu},\tilde{\Sigma})\prod_i\tilde{Z}_i$ where
+$\tilde{\mu}=(\tilde{\mu}_1,...,\tilde{\mu}_n)\,\,\text{and}\,\,\tilde{\Sigma}\,\,\text{is diagnoal}\,\,\tilde{\Sigma}_{ii}=\tilde{\sigma}^2_i$&lt;/p>
 &lt;p>Then we will define the approximate distribution
 $q(f|X,y)$:
 $$
@@ -425,7 +440,7 @@ $t_i$ to obtain the cavity distribution
 $q_{- i} (f_i)= \frac{q(f_i|X,y)}{t_i}$. The cavity distribution obtained here is still a Gaussian distribution, and one easy way to understand it is that the product of two Gaussian variables is still a Gaussian distribution (
 $q(f_i|X,y) = q_{- i} (f_i)\times t_i$, we can reverse to obtain
 $q_{- i }(f_i)$) by using known
-$q(f_i|\bm{X},\bm{y}),t_i$.
+$q(f_i|X,y),t_i$.
 $$
 \begin{split} \Rightarrow &amp;\,\,q_{- i }(f_i)=\mathcal{N}(f_i|\mu_{- i},\sigma_{- i}^2) \\ &amp;\text{where}\,\,\mu_{- i }=\sigma_{- i }^2(\sigma_i^{-2}\mu_i-\tilde{\sigma}_i^{-2}\tilde{\mu}_i)\,,\,\,\text{and}\,\,\sigma_{- i }^2=(\sigma_i^{-2}-\tilde{\sigma}_i^{-2})^{-1} \end{split} \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, (14)
 $$
@@ -448,7 +463,10 @@ $\hat{Z}_i$ to match it with
 $q_{-i }(f_i)p(y_i|f_i)$. Finally, we obtain the parameters of
 $\hat{q}$:
 $$
-\hat{Z}_i=\Phi(z_i),\,\,\,\,\,\hat{\mu}_i=\mu_{-i} + \frac{y_i\sigma^2_{-i}\mathcal{N}(z_i)}{\Phi(z_i)\sqrt{1+\sigma^2_{-i} }},\,\,\,\,\,\hat{\sigma_i^2}=\sigma^2_{-i} -\frac{\sigma^4_{-i}\mathcal{N}(z_i) }{(1+\sigma_{-i}^2)\Phi(z_i)}(z_i+\frac{\mathcal{N}(z_i)}{\Phi(z_i)})
+\hat{Z}_i=\Phi(z_i),\,\,\,\,\,\hat{\mu}_i=\mu_{-i} + \frac{y_i\sigma^2_{-i}\mathcal{N}(z_i)}{\Phi(z_i)\sqrt{1+\sigma^2_{-i} }},
+$$
+$$
+\hat{\sigma_i^2}=\sigma^2_{-i} -\frac{\sigma^4_{-i}\mathcal{N}(z_i) }{(1+\sigma_{-i}^2)\Phi(z_i)}(z_i+\frac{\mathcal{N}(z_i)}{\Phi(z_i)})
 $$
 where
 $z_i=\frac{y_i\mu_{-i}}{\sqrt{1+\sigma_{-i}^2}}$ and
@@ -472,7 +490,12 @@ $i$. Expectation propagation is iteratively applied, updating each local approxi
 &lt;p>Like Laplace approximation, the EP algorithm also approximates the posterior distribution as a Gaussian distribution. For the derivation of the EP predictive distribution, we only need to replace the posterior distribution obtained by Laplace approximation with the approximate posterior obtained by EP, and the remaining derivation is completely identical. The predictive posterior distribution of latent variable
 $f^*$:
 $$
-\text{Mean: }\mathbb{E}_q[f^*|X,y,x^*]=k_*^TK^{-1}\mu=k_*^TK^{-1}(K^{-1}+\tilde{\Sigma}^{-1})^{-1}\tilde{\mu}=k_*^T(K+\tilde{\Sigma})^{-1}\tilde{\mu}\,\,\,\,\,\,\,\,\,\,(17)
+\begin{split}
+\text{Mean: }\mathbb{E}_q[f^*|X,y,x^*]&amp;=k_*^TK^{-1}\mu\\
+&amp;=k_*^TK^{-1}(K^{-1}+\tilde{\Sigma}^{-1})^{-1}\tilde{\mu}\\
+&amp;=k_*^T(K+\tilde{\Sigma})^{-1}\tilde{\mu}
+\end{split}
+\,\,\,\,\,\,\,\,\,\,(17)
 $$
 $$
 \text{Variance: }\mathbb{V}_q[f^*|X,y,x^*]=k(x^*,x^*)-k_*(K+\tilde{\Sigma})^{-1}k_*\,\,\,\,\,\,\,\,\,\,(18)
@@ -484,7 +507,7 @@ $$
 where
 $q(f^*|X,y,x^*)$ is the predictive distribution of latent variable
 $f^*$ with mean (17) and variance (18). By computing the integral on the right-hand side of the equation, we obtain the final required predictive probability:
-$q(y^*=1|X,y,x^*)=\Phi(\frac{k_*(K+\tilde{\Sigma})^{-1}\tilde{\mu}}{\sqrt{1+k(x^*,\x^*)-k_*(K+\tilde{\Sigma})^{-1}k_*}})$&lt;/p>
+$q(y^*=1|X,y,x^*)=\Phi(\frac{k_*(K+\tilde{\Sigma})^{-1}\tilde{\mu}}{\sqrt{1+k(x^*,x^*)-k_*(K+\tilde{\Sigma})^{-1}k_*}})$&lt;/p>
 &lt;h2 id="conclusion">Conclusion&lt;/h2>
 &lt;p>Actually, Gaussian process classification simply replaces the linear model in logistic regression with a Gaussian process. The difficulty lies in the fact that the Gaussian distribution assumption for the target variable y is not valid. The posterior distribution no longer has a closed-form solution, as in the regression problem, and an appropriate approximation is required. The article briefly introduces two commonly used approximation methods: Laplace approximation and expectation propagation. The Laplace method approximates the posterior distribution globally as a Gaussian distribution, which has the advantage of being simple and fast to compute, but has the disadvantage of being very poor in approximating multi-modal posterior distributions. Expectation propagation iteratively updates the posterior distribution of each sample locally, which has the advantage of relatively good approximation performance for any posterior distribution, but the disadvantage of being computationally complex and cannot guarantee the convergence of the global approximation.&lt;/p>
 &lt;p>Stepping out of this article or Gaussian process discussion, Laplace approximation has a wider range of applications, and I highly recommend everyone to learn about this method itself. You can refer to this blog post - &lt;a href="https://gregorygundersen.com/blog/2019/05/08/laplaces-method/" target="_blank" rel="noopener">Laplace&amp;rsquo;s Method&lt;/a>. Similarly, expectation propagation is not only applied in the approximation of Gaussian process classification, but also provides a good idea for the approximation of posterior distributions, and plays a very important role in variational inference.&lt;/p>
