@@ -379,7 +379,8 @@ $$
 Afterwards, the true likelihood of sample i will be combined with (13). To compute
 $q_{-i}(f_i)\,\,(13)$, we need to take two steps:&lt;/p>
 &lt;ol>
-&lt;li>Marginalize
+&lt;li>
+&lt;p>Marginalize
 $f_i$ from the approximate distribution of the overall
 $q(f|X,y)$ to obtain
 $q(f_i|X,y)$. There are two points to note here: (1)
@@ -391,8 +392,55 @@ $t_i$
 $$
 q(f_i|X,y)=\int p(f|X)t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma^2_i})\prod_{j\neq i}t_j(f_j|\tilde{Z}_j,\tilde{\mu}_j,\tilde{\sigma}^2_j)\,df_j
 $$
+Therefore, we need to divide by
+$t_i$ to obtain the cavity distribution
+$q_{- i} (f_i)= \frac{q(f_i|X,y)}{t_i}$. The cavity distribution obtained here is still a Gaussian distribution, and one easy way to understand it is that the product of two Gaussian variables is still a Gaussian distribution (
+$q(f_i|X,y) = q_{- i} (f_i)\times t_i$, we can reverse to obtain
+$q_{- i }(f_i)$) by using known
+$q(f_i|\bm{X},\bm{y}),t_i$.
+$$
+\begin{split} \Rightarrow &amp;\,\,q_{- i }(f_i)=\mathcal{N}(f_i|\mu_{- i},\sigma_{- i}^2) \\ &amp;\text{where}\,\,\mu_{- i }=\sigma_{- i }^2(\sigma_i^{-2}\mu_i-\tilde{\sigma}_i^{-2}\tilde{\mu}_i)\,,\,\,\text{and}\,\,\sigma_{- i }^2=(\sigma_i^{-2}-\tilde{\sigma}_i^{-2})^{-1} \end{split} \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, (14)
+$$
+&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&amp;amp; 3. Next, we need to incorporate the true likelihood
+$p(y_i|f_i)$ into the constructed cavity distribution
+$q_i^-(f_i)p(y_i|f_i)$ to approximate
+$q(f_i|X,y)$. However, this product is not a Gaussian distribution, so we need to find a Gaussian approximation for this product:
+$$
+\Rightarrow\hat{q}(f_i)\triangleq \hat{Z}_i\mathcal{N}(\hat{\mu}_i,\hat{\sigma}_i^2)\simeq q_{-i }(f_i)p(y_i|f_i) \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(15)
+$$
+Here, we minimize the KL divergence between the product and the approximate distribution
+$\hat{q}(f_i)$ by setting it to be a Gaussian distribution that matches the mean and variance of
+$q_{-i }(f_i)p(y_i|f_i)$. The equation is
+$\min_{\hat{q}}KL( q_{-i }(f_i)p(y_i|f_i) \|\hat{q}(f_i))$. After matching the mean and variance, we need to normalize
+$\hat{q}(f_i)$ by a constant
+$\hat{Z}_i$ to match it with
+$q_{-i }(f_i)p(y_i|f_i)$. Finally, we obtain the parameters of
+$\hat{q}$:
+$$
+\hat{Z}_i=\Phi(z_i),\,\,\,\,\,\hat{\mu}_i=\mu_{-i} + \frac{y_i\sigma^2_{-i}\mathcal{N}(z_i)}{\Phi(z_i)\sqrt{1+\sigma^2_{-i} }},\,\,\,\,\,\hat{\sigma_i^2}=\sigma^2_{-i} -\frac{\sigma^4_{-i}\mathcal{N}(z_i) }{(1+\sigma_{-i}^2)\Phi(z_i)}(z_i+\frac{\mathcal{N}(z_i)}{\Phi(z_i)})
+$$
+where
+$z_i=\frac{y_i\mu_{-i}}{\sqrt{1+\sigma_{-i}^2}}$ and
+$\Phi$ is the cumulative distribution function of the standard normal distribution. The complete derivation can be found in section 3.9 [2].&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Finally, we need to calculate the parameters of the local approximation distribution
+$t_i$:
+$\tilde{Z}_i,\tilde{μ}_i,\tilde{σ}_i^2$. We replace
+$q(f_i|X,y)$ with the results obtained from the previous two steps
+$\Rightarrow\hat{q}(f_i)=t_iq_{-i}(f_i)$, and all three distributions here are Gaussian. Through simple calculations, we can obtain:
+$$
+\tilde{Z}_i=\hat{Z}_i\sqrt{2\pi}\sqrt{\sigma^2_{- i}+\tilde{\sigma^2_i}}\exp(\frac{1}{2}(\mu_{-i} -\tilde{\mu}_i)^2/(\sigma^2_{-i}+\tilde{\sigma}_i^2))
+$$
+We have now completed the update of the approximate likelihood
+$t_i$ for sample
+$i$. Expectation propagation is iteratively applied, updating each local approximation value in turn. Since the update of each local approximation affects the overall approximation, we need to perform multiple updates for each set of samples until the overall likelihood converges.&lt;/p>
 &lt;/li>
 &lt;/ol>
+&lt;h3 id="52-predication">5.2 Predication&lt;/h3>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
