@@ -201,8 +201,8 @@ width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>cov(x1,x2)=0.95&lt;/em>
-As you can see from the graph above, as the correlation between
+&lt;em>cov(x1,x2)=0.95&lt;/em>&lt;/p>
+&lt;p>As you can see from the graph above, as the correlation between
 $x_1,x_2$ gets larger, the values of
 $x_1$ and
 $x_2$ that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample,
@@ -237,7 +237,11 @@ height="307"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution
-$(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to the properties of the Gaussian distribution.
+$(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to the properties of the Gaussian distribution.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
@@ -249,7 +253,15 @@ width="370"
 height="248"
 loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
-&lt;em>Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)&lt;/em>&lt;/p>
+&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">&lt;em>Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)&lt;/em>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
 &lt;p>&lt;strong>New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.&lt;/strong> It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, &amp;hellip;, and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.&lt;/p>
 &lt;h3 id="3-gaussian-process-regression">3. Gaussian Process Regression&lt;/h3>
 &lt;p>Recall from the previous definition of a Gaussian process that &lt;strong>any number of random variables constitutes a Gaussian distribution&lt;/strong>. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form:
