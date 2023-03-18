@@ -115,6 +115,8 @@ $$
 \begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{在 $x_0$ 对 $h(x)$ Take Second order Taylor expansion}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$ $\Rightarrow h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, then we can get the approximate of desired integral} \end{split}
 $$
 &lt;/p>
+&lt;h3 id="42-posterior-distribution-hahahugoshortcodes77hbhb">4.2 Posterior distribution
+$p(f|X,y)$&lt;/h3>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
