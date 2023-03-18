@@ -101,16 +101,16 @@ $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
 \begin{split}
-&\text{Firstly, we define $h(x)=\log(g(x))$}\\
+&\text{Firstly, we define} h(x)=\log(g(x))\\
 &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\
-&\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\
+&\text{Take Second order Taylor expansion of} h(x) \text{at} x_0}\\
 &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\
-&\text{we know $g(x)$ will be maximum at $x_0$}\\
-& \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\
+&\text{we know} g(x) \text{will be maximum at} x_0\\
+&\text{and} h(x) \text{will also be maximum at} x_0 \Rightarrow h'(x_0)=0\\
 &\Rightarrow\int_a^bg(x)\,dx\approx\\
 &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\
-&\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\
-& \text{then we can get the approximate of desired integral}
+&\Rightarrow \text{we only need to find} x_0 \text{and compute} h''(x_0)\\
+&\text{then we can get the approximate of desired integral}
 \end{split}
 $$</p><h3 id=42-posterior-distribution-hahahugoshortcodes78hbhb>4.2 Posterior distribution
 $p(f|X,y)$</h3><p>Roughly speaking, under the second-order Taylor approximation,
@@ -136,7 +136,10 @@ $$
 Take derivative of (4) with respect to
 $f\Rightarrow$
 $$
-\begin{split} &\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)\\ &\nabla\nabla\Psi(f)=\nabla\nabla\log p(y|f)-K^{-1}=-W-K^{-1}\,\,\,\,\,\,\,(6) \end{split}
+&\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
+$$
+$$
+\nabla\nabla\Psi(f)=\nabla\nabla\log p(y|f)-K^{-1}=-W-K^{-1}\,\,\,\,\,\,\,(6)
 $$
 where
 $W=-\nabla\nabla\log p(y|f)$ It should be noted that because we assume that each sample
@@ -151,7 +154,11 @@ $f = \hat{f}$, our first-order derivative
 $(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
 $\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it.</td></tr></tbody></table><p>Here, we can use Newton&rsquo;s method for iteration:
 $$
-\begin{split} f^{\text{new}}=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi&=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\ &=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f)) \end{split}
+\begin{split}
+f^{\text{new}}&=f-(\nabla\nabla\Psi)^{-1}\nabla\Psi\\
+&=f+(K^{-1}+W^{-1})^{-1}(\nabla\log p(y|f)-K^{-1}f)\\
+&=(K^{-1}+W)^{-1}(Wf+\nabla\log p(y|f))
+\end{split}
 $$
 After finding
 $\hat{f}$ and its Hessian matrix (6), we can obtain the posterior distribution of Laplace&rsquo;s approximation:
@@ -167,11 +174,9 @@ $p$ distribution as parameters of the Gaussian distribution
 $q$. However, this information may (1) be far from sufficient to fully describe the distribution
 $p$ or (2) not correctly reflect the characteristics of the distribution
 $p$, such as if
-$p$ is a long-tail distribution or a multi-modal distribution.
-|<figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
+$p$ is a long-tail distribution or a multi-modal distribution.</p><table><thead><tr><th style=text-align:center><figure><div class="d-flex justify-content-center"><div class=w-100><img alt=png srcset="/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp 400w,
 /post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_11f2f52097b907d18ee101f0986a7c2c.webp 760w,
-/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp width=760 height=349 loading=lazy data-zoomable></div></div></figure>|
-|<em>Laplace&rsquo;s approximation: (left) using Laplace&rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&rsquo;s approximation for a unimodal distribution p will result in a good approximation q.</em>|</p><h3 id=43-predication>4.3 Predication</h3><p>By using Laplace&rsquo;s approximation, we can substitute the approximate posterior distribution
+/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_1200x1200_fit_q75_h2_lanczos_3.webp 1200w" src=/post/gpc/la_performance_huec95201c57903ac51221b9529b63468f_47215_6b111255f489320330ce213c3c0fd852.webp width=760 height=349 loading=lazy data-zoomable></div></div></figure></th></tr></thead><tbody><tr><td style=text-align:center><em>Laplace&rsquo;s approximation: (left) using Laplace&rsquo;s approximation for a multi-modal distribution p will lead to a very poor approximation q; (right) using Laplace&rsquo;s approximation for a unimodal distribution p will result in a good approximation q.</em></td></tr></tbody></table><h3 id=43-predication>4.3 Predication</h3><p>By using Laplace&rsquo;s approximation, we can substitute the approximate posterior distribution
 $q(f|X,y)$ (equation 7) into the predictive mean (Recap 2) of the regression problem, and obtain the mean of the predictive distribution for a new input
 $x^*$:
 $$
