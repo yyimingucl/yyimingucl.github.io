@@ -217,9 +217,36 @@ $$
 q(f_i|X,y)=\int p(f|X)t_i(f_i|\tilde{Z}_i,\tilde{\mu}_i,\tilde{\sigma^2_i})\prod_{j\neq i}t_j(f_j|\tilde{Z}_j,\tilde{\mu}_j,\tilde{\sigma}^2_j)\,df_j
 $$
 {{< /math >}}
+Therefore, we need to divide by {{< math >}}$t_i${{< /math >}} to obtain the cavity distribution {{< math >}}$q_{- i} (f_i)= \frac{q(f_i|X,y)}{t_i}${{< /math >}}. The cavity distribution obtained here is still a Gaussian distribution, and one easy way to understand it is that the product of two Gaussian variables is still a Gaussian distribution ({{< math >}}$q(f_i|X,y) = q_{- i} (f_i)\times t_i${{< /math >}}, we can reverse to obtain {{< math >}}$q_{- i }(f_i)${{< /math >}}) by using known {{< math >}}$q(f_i|\bm{X},\bm{y}),t_i${{< /math >}}. 
+{{< math >}}
+$$
+\begin{split} \Rightarrow &\,\,q_{- i }(f_i)=\mathcal{N}(f_i|\mu_{- i},\sigma_{- i}^2) \\ &\text{where}\,\,\mu_{- i }=\sigma_{- i }^2(\sigma_i^{-2}\mu_i-\tilde{\sigma}_i^{-2}\tilde{\mu}_i)\,,\,\,\text{and}\,\,\sigma_{- i }^2=(\sigma_i^{-2}-\tilde{\sigma}_i^{-2})^{-1}  \end{split}  \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, \,\,\,\,\,\, (14)
+$$
+{{< /math >}}
 
+2. & 3. Next, we need to incorporate the true likelihood {{< math >}}$p(y_i|f_i)${{< /math >}} into the constructed cavity distribution {{< math >}}$q_i^-(f_i)p(y_i|f_i)${{< /math >}} to approximate {{< math >}}$q(f_i|X,y)${{< /math >}}. However, this product is not a Gaussian distribution, so we need to find a Gaussian approximation for this product:
+{{< math >}}
+$$
+\Rightarrow\hat{q}(f_i)\triangleq \hat{Z}_i\mathcal{N}(\hat{\mu}_i,\hat{\sigma}_i^2)\simeq q_{-i }(f_i)p(y_i|f_i) \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(15)
+$$
+{{< /math >}}
+Here, we minimize the KL divergence between the product and the approximate distribution {{< math >}}$\hat{q}(f_i)${{< /math >}} by setting it to be a Gaussian distribution that matches the mean and variance of {{< math >}}$q_{-i }(f_i)p(y_i|f_i)${{< /math >}}. The equation is {{< math >}}$\min_{\hat{q}}KL( q_{-i }(f_i)p(y_i|f_i) \|\hat{q}(f_i))${{< /math >}}. After matching the mean and variance, we need to normalize {{< math >}}$\hat{q}(f_i)${{< /math >}} by a constant {{< math >}}$\hat{Z}_i${{< /math >}} to match it with  {{< math >}}$q_{-i }(f_i)p(y_i|f_i)${{< /math >}}. Finally, we obtain the parameters of {{< math >}}$\hat{q}${{< /math >}}: 
+{{< math >}}
+$$
+\hat{Z}_i=\Phi(z_i),\,\,\,\,\,\hat{\mu}_i=\mu_{-i} + \frac{y_i\sigma^2_{-i}\mathcal{N}(z_i)}{\Phi(z_i)\sqrt{1+\sigma^2_{-i} }},\,\,\,\,\,\hat{\sigma_i^2}=\sigma^2_{-i} -\frac{\sigma^4_{-i}\mathcal{N}(z_i) }{(1+\sigma_{-i}^2)\Phi(z_i)}(z_i+\frac{\mathcal{N}(z_i)}{\Phi(z_i)}) 
+$$
+{{< /math >}}
+where {{< math >}}$z_i=\frac{y_i\mu_{-i}}{\sqrt{1+\sigma_{-i}^2}}${{< /math >}} and {{< math >}}$\Phi${{< /math >}} is the cumulative distribution function of the standard normal distribution. The complete derivation can be found in section 3.9 [2].
 
+4. Finally, we need to calculate the parameters of the local approximation distribution {{< math >}}$t_i${{< /math >}}:  {{< math >}}$\tilde{Z}_i,\tilde{μ}_i,\tilde{σ}_i^2${{< /math >}}. We replace {{< math >}}$q(f_i|X,y)${{< /math >}} with the results obtained from the previous two steps {{< math >}}$\Rightarrow\hat{q}(f_i)=t_iq_{-i}(f_i)${{< /math >}}, and all three distributions here are Gaussian. Through simple calculations, we can obtain: 
+{{< math >}}
+$$
+\tilde{Z}_i=\hat{Z}_i\sqrt{2\pi}\sqrt{\sigma^2_{- i}+\tilde{\sigma^2_i}}\exp(\frac{1}{2}(\mu_{-i} -\tilde{\mu}_i)^2/(\sigma^2_{-i}+\tilde{\sigma}_i^2)) 
+$$
+{{< /math >}}
+We have now completed the update of the approximate likelihood {{< math >}}$t_i${{< /math >}} for sample {{< math >}}$i${{< /math >}}. Expectation propagation is iteratively applied, updating each local approximation value in turn. Since the update of each local approximation affects the overall approximation, we need to perform multiple updates for each set of samples until the overall likelihood converges.
 
+### 5.2 Predication
 <!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
