@@ -1,0 +1,304 @@
+<!doctype html><!-- This site was created with Wowchemy. https://www.wowchemy.com --><!-- Last Published: March 18, 2023 --><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Wowchemy 5.7.0 for Hugo"><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media=print onload='this.media="all"'><script src=/js/mathjax-config.js></script>
+<link rel=stylesheet href=/css/vendor-bundle.min.16f785cdb553c8c4431db6775122af35.css media=print onload='this.media="all"'><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/academicons@1.9.2/css/academicons.min.css integrity="sha512-KlJCpRsLf+KKu2VQa5vmRuClRFjxc5lXO03ixZt82HZUk41+1I0bD8KBSA0fY290ayMfWYI9udIqeOWSu1/uZg==" crossorigin=anonymous media=print onload='this.media="all"'><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css integrity crossorigin=anonymous media=print onload='this.media="all"'><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js integrity crossorigin=anonymous async></script>
+<link rel=stylesheet href=/css/wowchemy.e5d7adca760216d3b7e28ea434e81f6f.css><link rel=stylesheet href=/css/libs/chroma/github-light.min.css title=hl-light media=print onload='this.media="all"'><link rel=stylesheet href=/css/libs/chroma/dracula.min.css title=hl-dark media=print onload='this.media="all"' disabled><meta name=author content="Yiming Yang"><meta name=description content="Introduction In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &lsquo;finding a function mapping from input $x$ to output $y$&rsquo;."><link rel=alternate hreflang=en-us href=https://yyimingucl.github.io/post/gpc/><link rel=canonical href=https://yyimingucl.github.io/post/gpc/><link rel=manifest href=/manifest.webmanifest><link rel=icon type=image/png href=/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_32x32_fill_lanczos_center_3.png><link rel=apple-touch-icon type=image/png href=/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_180x180_fill_lanczos_center_3.png><meta name=theme-color content="#1565c0"><meta property="twitter:card" content="summary"><meta property="twitter:site" content="@wowchemy"><meta property="twitter:creator" content="@wowchemy"><meta property="twitter:image" content="https://yyimingucl.github.io/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_512x512_fill_lanczos_center_3.png"><meta property="og:site_name" content="Yiming Yang"><meta property="og:url" content="https://yyimingucl.github.io/post/gpc/"><meta property="og:title" content="From gaussian process back to linear regression | Yiming Yang"><meta property="og:description" content="Introduction In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &lsquo;finding a function mapping from input $x$ to output $y$&rsquo;."><meta property="og:image" content="https://yyimingucl.github.io/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_512x512_fill_lanczos_center_3.png"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2020-12-13T00:00:00+00:00"><meta property="article:modified_time" content="2020-12-13T00:00:00+00:00"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yyimingucl.github.io/post/gpc/"},"headline":"From gaussian process back to linear regression","datePublished":"2020-12-13T00:00:00Z","dateModified":"2020-12-13T00:00:00Z","author":{"@type":"Person","name":"Yiming Yang"},"publisher":{"@type":"Organization","name":"Yiming Yang","logo":{"@type":"ImageObject","url":"https://yyimingucl.github.io/media/icon_hu718bbe824f05a3d2309b511845d9303e_95507_192x192_fill_lanczos_center_3.png"}},"description":"Introduction In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as \u0026lsquo;finding a function mapping from input $x$ to output $y$\u0026rsquo;."}</script><title>From gaussian process back to linear regression | Yiming Yang</title></head><body id=top data-spy=scroll data-offset=70 data-target=#TableOfContents class=page-wrapper data-wc-page-id=9798cdfe7888cc4356cef40a362f048e><script src=/js/wowchemy-init.min.ec9d49ca50e4b80bdb08f0417a28ed84.js></script><aside class=search-modal id=search><div class=container><section class=search-header><div class="row no-gutters justify-content-between mb-3"><div class=col-6><h1>Search</h1></div><div class="col-6 col-search-close"><a class=js-search href=# aria-label=Close><i class="fas fa-times-circle text-muted" aria-hidden=true></i></a></div></div><div id=search-box><input name=q id=search-query placeholder=Search... autocapitalize=off autocomplete=off autocorrect=off spellcheck=false type=search class=form-control aria-label=Search...></div></section><section class=section-search-results><div id=search-hits></div></section></div></aside><div class="page-header header--fixed"><header><nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id=navbar-main><div class=container-xl><div class="d-none d-lg-inline-flex"><a class=navbar-brand href=/>Yiming Yang</a></div><button type=button class=navbar-toggler data-toggle=collapse data-target=#navbar-content aria-controls=navbar-content aria-expanded=false aria-label="Toggle navigation">
+<span><i class="fas fa-bars"></i></span></button><div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none"><a class=navbar-brand href=/>Yiming Yang</a></div><div class="navbar-collapse main-menu-item collapse justify-content-start" id=navbar-content><ul class="navbar-nav d-md-inline-flex"><li class=nav-item><a class=nav-link href=/#about><span>Home</span></a></li><li class=nav-item><a class=nav-link href=/#experience><span>Experience</span></a></li><li class=nav-item><a class=nav-link href=/#publications><span>Publications</span></a></li><li class=nav-item><a class=nav-link href=/#posts><span>Posts</span></a></li><li class=nav-item><a class=nav-link href=/#four-legged_partners><span>Four-legged families</span></a></li><li class=nav-item><a class=nav-link href=/#contact><span>Contact</span></a></li></ul></div><ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2"><li class=nav-item><a class="nav-link js-search" href=# aria-label=Search><i class="fas fa-search" aria-hidden=true></i></a></li><li class="nav-item dropdown theme-dropdown"><a href=# class=nav-link data-toggle=dropdown aria-haspopup=true aria-label="Display preferences"><i class="fas fa-moon" aria-hidden=true></i></a><div class=dropdown-menu><a href=# class="dropdown-item js-set-theme-light"><span>Light</span></a>
+<a href=# class="dropdown-item js-set-theme-dark"><span>Dark</span></a>
+<a href=# class="dropdown-item js-set-theme-auto"><span>Automatic</span></a></div></li></ul></div></nav></header></div><div class=page-body><article class=article><div class="article-container pt-3"><h1>From gaussian process back to linear regression</h1><div class=article-metadata><div><span class=author-highlighted>Yiming Yang</span></div><span class=article-date>Dec 13, 2020</span>
+<span class=middot-divider></span>
+<span class=article-reading-time>2 min read</span></div></div><div class=article-container><div class=article-style><h2 id=introduction>Introduction</h2><p>In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &lsquo;finding a function mapping from input
+$x$ to output
+$y$&rsquo;. However, compared to regression problems, Gaussian processes encounter many challenging issues when dealing with classification problems. This article will elucidate these issues and provide corresponding solutions.</p><h3 id=1-review-gaussian-process-regression>1. Review: Gaussian Process Regression</h3><p>A Gaussian process is a stochastic process where any point
+$x\in R^d$ is assigned a random variable
+$f$ and the joint distribution of these variables follows a Gaussian distribution
+$f|x\sim\mathcal{N}(\mu,K)$. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function
+$\mu$ and the covariance
+$K=k(X,X)$ where k is a parameterized kernel function. For
+$\mu$, we generally set it to 0 (ie.
+$\mu(\,\cdot\,)=0$). Given a set of input values
+$X$ and their corresponding noisy observations
+$y$, we want to predict the function value
+$f^*$ at the new point
+$x^*$. The joint distribution of the observed values
+$y$ and the predicted value
+$f^*$ is a Gaussian distribution, which has the following form:
+$$
+\bm{y},\bm{f}^*|\bm{X},\bm{x}^*\sim\mathcal{N}(\begin{bmatrix} \bm{y}\\ \bm{f}^*\\ \end{bmatrix}|\,\bm{0},\begin{bmatrix} \bm{K_y}&\bm{k}_*\\            \bm{k}_*&\bm{k}_{**}\\ \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
+$$
+$\bm{K}_y=\bm{K}+\sigma_y^2\bm{I}$,
+$\bm{k}_*=\mathcal{k}(\bm{X},\bm{x}_*)$, and
+$\bm{k}_{**}=\mathcal{k}(\bm{x}^*,\bm{x}^*)$.
+$\sigma_y^*$ is used to model the noise in the observed values. By applying Bayes&rsquo; theorem to the joint distribution above, we obtain the predictive distribution for
+$f^*$:
+$$
+\bm{f}^*|\bm{x}_*,\bm{X},\bm{y}\sim\mathcal{N}(\bm{f}^*|\bm{\mu}_*,\bm{\Sigma}_*),\,\,\,\,\bm{\mu}_*=\bm{k}_*^T\bm{K}_y^{-1}\bm{y}\,\,,\,\bm{\Sigma}_*=\bm{k}_{**}-\bm{k}_*^T\bm{K}_y^{-1}\bm{k}_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
+$$</p><!-- From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that 
+
+$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)$. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables 
+
+$x_1,x_2$.
+![png](2d_gaussian_cov0.png)
+*cov(x1,x2)=0*
+![png](2d_gaussian_cov0.7.png)
+*cov(x1,x2)=0.7*
+![png](2d_gaussian_cov0.95.png)
+*cov(x1,x2)=0.95*
+As you can see from the graph above, as the correlation between 
+
+$x_1,x_2$ gets larger, the values of 
+
+$x_1$ and 
+
+$x_2$ that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample, 
+
+$x_1$ is always equal to 
+
+$x_2$. 
+
+### 2. High-dimensional Gaussian distribution
+The simple two-dimensional case was studied, let's now extend to 20 dimensions.
+![png](finite_sample_demo.png)
+*20-dimensional Gaussian distribution*
+
+The two left figures above, same as in 2D case, are sampled values for 
+
+$(x_1,x_2,...x_{20})$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)
+
+What if we fix two random variables and sample again?
+![png](finite_sample_with_fixed_dim.png)
+What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution 
+
+$(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to the properties of the Gaussian distribution.
+![png](error_bar.png)
+*Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)*
+
+**New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.** It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, ..., and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.
+
+### 3. Gaussian Process Regression
+Recall from the previous definition of a Gaussian process that **any number of random variables constitutes a Gaussian distribution**. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form: 
+
+$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))$ where 
+
+$m(\cdot)\,\,,K(\cdot,\cdot)$ are called the mean function and covariance function respectively. By definition in this way, we can get ride of the limitation of the discrete case and the mean and covariance matrix can be calculated for any function 
+
+$f(x)$.
+
+From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.
+![png](gaussian_prior.png)
+*m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1*
+
+The figure above shows the 5 functions sampled from the prior distribution of this function. The blue region is 
+
+$\mu\pm\sigma^2$.
+![png](gaussian_posterior.png)
+The above figure demonstrates the functions sampled in the posterior distribution, given three samples 
+
+$(x_1,y_1),(x_2,y_2),(x_3,y_3)$. The thick black line is the mean. It can be seen that, same as in the second part of the 20-dimensional discrete case, the variance around the sample points is almost zero. (Another way to understand the process of combing samples is to reject the functions that do not match these sample points.)
+
+### 4. Covariance Function (Kernel)
+For given sample 
+
+$X=((x_1),(x_2),...,(x_n)$ (each column is the feature for each sample 
+
+$(x_i)$, then the posterior distribution can be written in the form 
+
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where 
+
+$[K(X,X)]_{ij}=K(x_i,x_j)$.
+
+Simply starting from the idea of the kernel trick, it is equivalent to quantifies the relationship between points on the feature space induced by the covariance function (though of course the choice of covariance function varies for different situations). Returning to the perspective of the infinite dimensional Gaussian distribution, the covariance function quantifies the relationship between infinitely closed points. In some sense, the covariance function 
+
+$K(\cdot\,\,,\cdot)$ determines the overall shape of the function (from an a priori perspective, the covaraince function expresses the priori knowledge of the desired function). 
+
+The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function 
+
+$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2}$). The squared-exponential covariance function is used here as an example for a brief discussion.
+![png](kernel_demo.png)
+The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.
+![png](covariance_prior_demo.png)
+*Sample from Gaussian Process by squared-exponential covariance function with different parameter L*
+
+### 5. Use GP for regression
+Summarizing the above process, a prior is first given for all potential functions by Gaussian process, then, combined with the samples, we obtain the posterior distribution for the function 
+
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where 
+
+$[K(X,X)]_{ij}=K(x_i,x_j)$.
+
+Taken the noise into account, the output function becomes 
+
+$y(X)=f(X)+\sigma^2_yI\,\,,\sigma^2_yI\sim\mathcal{N}(0,1)$ and 
+
+$y(X)\sim\mathcal{N}(m(X),K(X,X)+\sigma^2_y)$.
+
+**New Question Again: How can we store an infinite dimensional Gaussian distribution in a computer with finite memory? Similarly, for the posterior distribution given samples 
+
+$(X,Y)$, we can see that the parameters are only finite dimensional (the mean is a vector of length n and the covariance matrix is n*n), so does this result contradict or behave inconsistently with the infinite dimensionality?**
+
+### 6. Consistency and Marginalisation Property
+Both of these problems can be solved perfectly by the **Marginalisation Property** of the Gaussian distribution. For Multivariate Gaussian distribution:
+
+
+$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} 	a\\ 	b\end{matrix}\right),\left(\begin{matrix} 	A &B\\ 	B^T&C \end{matrix}\right))\Rightarrow P(Y_1)\sim N(a, A)$$
+With this property means that we can split only the part of our interest (samples and predictions) from the entire infinite dimensional Gaussian distribution and ignore these parts are not in our interest (no need to interpolation/extrapolation). This property is then used to derive for the distribution of our part of interest. 1. For the first problem, we just need to keep the multivariate Gaussian distribution of the sample part in the computer. 2. For the second problem, it can be seen from the above properties that the parameters of the marginal distribution obtained by partitioning the whole Gaussian distribution are also part of the parameters of the whole Gaussian distribution (or saying derived from the parameters of the infinite-dimensional distribution), thus ensuring consistency with the results of the Gaussian process.
+
+### 7. Prediction
+Assume 
+
+$Y_1$ is the sample value, 
+
+$Y_2$ is the predicted value and 
+
+$m(x)=0$. By the definition of Gaussian Process, 
+
+
+$$\Rightarrow P(Y_1(X),Y_2(X))\sim N(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
+
+
+$$\Rightarrow P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$$ 
+
+
+$$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$$ 
+![png](predictive_distribution.png)
+
+Till now, we can calculate the conditional probability distribution to predict 
+
+$Y_2$ given the sample 
+
+$Y_1$. Looking at these two parameters separately, 
+
+- the covariance of the conditional probability:
+
+
+$\Sigma_{Y_2|Y_1}=K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})\Leftrightarrow$ predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples. 
+
+$K(X_{Y_2},X_{Y_2})$ is derived from the covaraince function 
+
+$K(x_i,x_j)$ given in the previous definition of the prior, computed from the given inputs, so it can be seen as uncertainty in the prior. 
+
+$K(X_{Y_1},X_{Y_2})$ is obtained from the inputs corresponding to the predicted values 
+
+$X_{Y_2}$, with the inputs corresponding to the samples 
+
+$X_{Y_1}$ calculated by the covariance function, which quantifies the correlation between the samples and the predicted inputs. 
+
+$K(X_{Y_1},X_{Y_1})$ is the covariance matrix obtained from the sample. If the whole second term of the formula can be seen as the exponential term in the Gaussian distribution, and simply 
+
+$K(X_{Y_2},X_{Y_1})$ as 
+
+$(X_{Y_2}-X_{Y_1})$ (both measure the relationship between points), then it can be interpreted as follows, the higher the correlation with the sample (closer to the mean), the larger the value 
+
+$K(X_{Y_2},X_{Y_1})$ will be. Note the negative sign in the covariance, 
+
+$\Rightarrow$ Reduce more uncertainty 
+
+$\Rightarrow$ Higher correlation with the sample 
+
+$\Rightarrow$ Lower uncertainty of the predicition.
+
+The mean of marginal distribution:
+
+
+
+$$
+\mu_{Y_2|Y_1}=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\ =\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\ (\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+$$
+
+It is worth noting that the mean of the entire predictive distribution can be seen as a weighted average of the sample outputs Y1 (in general, the more relevant the sample, the larger the corresponding weight). Also this form coincides with the dual form of L2 regression.
+
+### 8. Weight Space
+The above has discussed Gaussian regression from the view of function space, and weight space is another perspective to understand.
+![png](bayesian_regression_diagram.png)
+The above figure depicts linear regression from the weight space, which is restricted to a specific functional form with a prior distribution (
+
+$\mathcal{N}(0,C)$) added to the weights, and the likelihood of the whole form can be written as 
+![png](gp_likelihood.png)
+The posterior distribution of the weights can be obtained by integrating the prior distribution of the likelihood and the weights through the Bayesian formula
+![png](gp_weight_posterior.png)
+For a Gaussian distribution, mode = mean, so we obtain the maximum a posteriori estimation 
+
+$=\bar{w}$. Looking at the mean, considering the standard noise case 
+
+$\sigma_n^2=1$, the prior covariance of 
+
+$w$ is 
+
+$\lambda I_n$,which gives the least squares estimate of L2 regression 
+
+$\bar{w}=(XX^T+\lambda I_n)^{-1}Xy$. (In fact, when 
+
+$y$ satisfies the assumption of a Gaussian distribution, the least squares estimate of the parameter 
+
+$w$ is equivalent to the maximum likelihood estimate). The L2 regression can be viewed in a Bayesian way as adding a prior distribution of 
+
+$\mathcal{N}(0,\lambda I_n)$ to the parameter 
+
+$w$ (The L1 regression can be seen as adding a 
+
+$Laplace(0,\frac{1}{\lambda})$ prior to the parameter 
+
+$w$). Furthermore, we can think of a general linear regression as having an uniform prior distribution (improper prior) for parameter 
+
+$w$). Finally, returning to the problem of infinitely possible functions, where the weight space restricts the form/type of the function, it is necessary to construct feature maps explicitly to transform different functional forms. This again aligns the idea of implicit construction of features using the kernel in function space.
+
+- Reference:
+  * [1] C.E.Rasmussen&C.K.I Williams, Gaussian Process for Machine Learning (GPML), 2006
+  * [2] CM.Bishop, Pattern Recognition and Machine Learning (PRML), 2006
+  * [3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013 --><!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
+
+As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
+
+## Ecosystem
+
+- **[Hugo Academic CLI](https://github.com/wowchemy/hugo-academic-cli):** Automatically import publications from BibTeX
+
+## Inspiration
+
+[Check out the latest **demo**](https://academic-demo.netlify.com/) of what you'll get in less than 10 minutes, or [view the **showcase**](https://wowchemy.com/user-stories/) of personal, project, and business sites.
+
+## Features
+
+- **Page builder** - Create _anything_ with [**widgets**](https://wowchemy.com/docs/page-builder/) and [**elements**](https://wowchemy.com/docs/content/writing-markdown-latex/)
+- **Edit any type of content** - Blog posts, publications, talks, slides, projects, and more!
+- **Create content** in [**Markdown**](https://wowchemy.com/docs/content/writing-markdown-latex/), [**Jupyter**](https://wowchemy.com/docs/import/jupyter/), or [**RStudio**](https://wowchemy.com/docs/install-locally/)
+- **Plugin System** - Fully customizable [**color** and **font themes**](https://wowchemy.com/docs/customization/)
+- **Display Code and Math** - Code highlighting and [LaTeX math](https://en.wikibooks.org/wiki/LaTeX/Mathematics) supported
+- **Integrations** - [Google Analytics](https://analytics.google.com), [Disqus commenting](https://disqus.com), Maps, Contact Forms, and more!
+- **Beautiful Site** - Simple and refreshing one page design
+- **Industry-Leading SEO** - Help get your website found on search engines and social media
+- **Media Galleries** - Display your images and videos with captions in a customizable gallery
+- **Mobile Friendly** - Look amazing on every screen with a mobile friendly version of your site
+- **Multi-language** - 34+ language packs including English, 中文, and Português
+- **Multi-user** - Each author gets their own profile page
+- **Privacy Pack** - Assists with GDPR
+- **Stand Out** - Bring your site to life with animation, parallax backgrounds, and scroll effects
+- **One-Click Deployment** - No servers. No databases. Only files.
+
+## Themes
+
+Wowchemy and its templates come with **automatic day (light) and night (dark) mode** built-in. Alternatively, visitors can choose their preferred mode - click the moon icon in the top right of the [Demo](https://academic-demo.netlify.com/) to see it in action! Day/night mode can also be disabled by the site admin in `params.toml`.
+
+[Choose a stunning **theme** and **font**](https://wowchemy.com/docs/customization) for your site. Themes are fully customizable.
+
+## License
+
+Copyright 2016-present [George Cushen](https://georgecushen.com).
+
+Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license. --></div><div class=share-box><ul class=share><li><a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F&amp;text=From+gaussian+process+back+to+linear+regression" target=_blank rel=noopener class=share-btn-twitter aria-label=twitter><i class="fab fa-twitter"></i></a></li><li><a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F&amp;t=From+gaussian+process+back+to+linear+regression" target=_blank rel=noopener class=share-btn-facebook aria-label=facebook><i class="fab fa-facebook"></i></a></li><li><a href="mailto:?subject=From%20gaussian%20process%20back%20to%20linear%20regression&amp;body=https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F" target=_blank rel=noopener class=share-btn-email aria-label=envelope><i class="fas fa-envelope"></i></a></li><li><a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F&amp;title=From+gaussian+process+back+to+linear+regression" target=_blank rel=noopener class=share-btn-linkedin aria-label=linkedin-in><i class="fab fa-linkedin-in"></i></a></li><li><a href="whatsapp://send?text=From+gaussian+process+back+to+linear+regression%20https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F" target=_blank rel=noopener class=share-btn-whatsapp aria-label=whatsapp><i class="fab fa-whatsapp"></i></a></li><li><a href="https://service.weibo.com/share/share.php?url=https%3A%2F%2Fyyimingucl.github.io%2Fpost%2Fgpc%2F&amp;title=From+gaussian+process+back+to+linear+regression" target=_blank rel=noopener class=share-btn-weibo aria-label=weibo><i class="fab fa-weibo"></i></a></li></ul></div><div class="media author-card content-widget-hr"><a href=https://yyimingucl.github.io><img class="avatar mr-3 avatar-circle" src=/authors/admin/avatar_hu7ed02a851e3119f9241d7a86e4773d4c_43299_270x270_fill_q75_lanczos_center.jpg alt="Yiming Yang"></a><div class=media-body><h5 class=card-title><a href=https://yyimingucl.github.io>Yiming Yang</a></h5><h6 class=card-subtitle>PhD Student in Statistical Science and Advanced Computing</h6><ul class=network-icon aria-hidden=true><li><a href=/><i class="fas fa-"></i></a></li><li><a href=/#contact><i class="fas fa-envelope"></i></a></li><li><a href=https://github.com/yyimingucl target=_blank rel=noopener><i class="fab fa-github"></i></a></li><li><a href=https://www.linkedin.com/in/yiming-yang-b87b72193/ target=_blank rel=noopener><i class="fab fa-linkedin"></i></a></li></ul></div></div></div></article></div><div class=page-footer><div class=container><footer class=site-footer><p class=powered-by>Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target=_blank rel=noopener>Wowchemy</a> — the free, <a href=https://github.com/wowchemy/wowchemy-hugo-themes target=_blank rel=noopener>open source</a> website builder that empowers creators.</p></footer></div></div><script src=/js/vendor-bundle.min.d26509351aa0ff874abbee824e982e9b.js></script>
+<script src=https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js integrity crossorigin=anonymous></script>
+<script id=search-hit-fuse-template type=text/x-template>
+    <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+    </div>
+  </script><script src=https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin=anonymous></script>
+<script id=page-data type=application/json>{"use_headroom":true}</script><script src=/js/wowchemy-headroom.db4755770454eb63685f8de785c0a172.js type=module></script>
+<script src=/en/js/wowchemy.min.e8ee06ba8371980ffde659871dd593b0.js></script>
+<script src=/js/wowchemy-map.a26e9d2f7238ba5b868384f1c5bc6477.js type=module></script><div id=modal class="modal fade" role=dialog><div class=modal-dialog><div class=modal-content><div class=modal-header><h5 class=modal-title>Cite</h5><button type=button class=close data-dismiss=modal aria-label=Close>
+<span aria-hidden=true>&#215;</span></button></div><div class=modal-body><pre><code></code></pre></div><div class=modal-footer><a class="btn btn-outline-primary my-1 js-copy-cite" href=# target=_blank><i class="fas fa-copy"></i> Copy</a>
+<a class="btn btn-outline-primary my-1 js-download-cite" href=# target=_blank><i class="fas fa-download"></i> Download</a><div id=modal-error></div></div></div></div></div><script src=/js/wowchemy-publication.68f8d7090562ca65fc6d3cb3f8f2d2cb.js type=module></script></body></html>

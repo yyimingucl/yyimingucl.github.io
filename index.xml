@@ -162,7 +162,189 @@ slides: example
 Create your slides in Markdown - click the &lt;em>Slides&lt;/em> button to check out the example.
 &lt;/div>
 &lt;/div>
-Supplementary notes can be added here, including [code, math, and images](https://wowchemy.com/docs/writing-markdown-latex/). --></description></item><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/getting-started/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/getting-started/</guid><description>&lt;h1 id="overview">Overview&lt;/h1>
+Supplementary notes can be added here, including [code, math, and images](https://wowchemy.com/docs/writing-markdown-latex/). --></description></item><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/gpc/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/gpc/</guid><description>&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>In a previous article, we briefly explained the application of Gaussian processes to regression problems. Apart from regression, classification is another important type of problem. Both regression and classification problems can be categorized as &amp;lsquo;finding a function mapping from input
+$x$ to output
+$y$&amp;rsquo;. However, compared to regression problems, Gaussian processes encounter many challenging issues when dealing with classification problems. This article will elucidate these issues and provide corresponding solutions.&lt;/p>
+&lt;h3 id="1-review-gaussian-process-regression">1. Review: Gaussian Process Regression&lt;/h3>
+&lt;p>A Gaussian process is a stochastic process where any point
+$x\in R^d$ is assigned a random variable
+$f$ and the joint distribution of these variables follows a Gaussian distribution
+$f|x\sim\mathcal{N}(\mu,K)$. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function
+$\mu$ and the covariance
+$K=k(X,X)$ where k is a parameterized kernel function. For
+$\mu$, we generally set it to 0 (ie.
+$\mu(\,\cdot\,)=0$). Given a set of input values
+$X$ and their corresponding noisy observations
+$y$, we want to predict the function value
+$f^*$ at the new point
+$x^*$. The joint distribution of the observed values
+$y$ and the predicted value
+$f^*$ is a Gaussian distribution, which has the following form:
+$$
+\bm{y},\bm{f}^*|\bm{X},\bm{x}^*\sim\mathcal{N}(\begin{bmatrix} \bm{y}\\ \bm{f}^*\\ \end{bmatrix}|\,\bm{0},\begin{bmatrix} \bm{K_y}&amp;\bm{k}_*\\ \bm{k}_*&amp;\bm{k}_{**}\\ \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
+$$
+$\bm{K}_y=\bm{K}+\sigma_y^2\bm{I}$,
+$\bm{k}_*=\mathcal{k}(\bm{X},\bm{x}_*)$, and
+$\bm{k}_{**}=\mathcal{k}(\bm{x}^*,\bm{x}^*)$.
+$\sigma_y^*$ is used to model the noise in the observed values. By applying Bayes&amp;rsquo; theorem to the joint distribution above, we obtain the predictive distribution for
+$f^*$:
+$$
+\bm{f}^*|\bm{x}_*,\bm{X},\bm{y}\sim\mathcal{N}(\bm{f}^*|\bm{\mu}_*,\bm{\Sigma}_*),\,\,\,\,\bm{\mu}_*=\bm{k}_*^T\bm{K}_y^{-1}\bm{y}\,\,,\,\bm{\Sigma}_*=\bm{k}_{**}-\bm{k}_*^T\bm{K}_y^{-1}\bm{k}_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
+$$
+&lt;/p>
+&lt;!-- From the above definition, it is clear that any number of random variables form a Gaussian distribution. To simplify the problem, we firstly take two of these random variables such that
+$(x_1,x_2)\sim\mathcal{N}(\mu,\Sigma)$. Three pictures below: (left) Density contours of the distribution. (right) Sampled values of the random variables
+$x_1,x_2$.
+![png](2d_gaussian_cov0.png)
+*cov(x1,x2)=0*
+![png](2d_gaussian_cov0.7.png)
+*cov(x1,x2)=0.7*
+![png](2d_gaussian_cov0.95.png)
+*cov(x1,x2)=0.95*
+As you can see from the graph above, as the correlation between
+$x_1,x_2$ gets larger, the values of
+$x_1$ and
+$x_2$ that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample,
+$x_1$ is always equal to
+$x_2$.
+### 2. High-dimensional Gaussian distribution
+The simple two-dimensional case was studied, let's now extend to 20 dimensions.
+![png](finite_sample_demo.png)
+*20-dimensional Gaussian distribution*
+The two left figures above, same as in 2D case, are sampled values for
+$(x_1,x_2,...x_{20})$ obtained from a 20-dimensional Gaussian distribution (Do the shown curves look like the non-linear regressions?) The right panel shows the covariance matrix, where you can see that variables has a strong correlation with their neighbors (also reflected in the two panes on the left, where the adjacent variables do not vary largely, thus making the whole curve very smooth.)
+What if we fix two random variables and sample again?
+![png](finite_sample_with_fixed_dim.png)
+What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution
+$(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to the properties of the Gaussian distribution.
+![png](error_bar.png)
+*Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)*
+**New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.** It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, ..., and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.
+### 3. Gaussian Process Regression
+Recall from the previous definition of a Gaussian process that **any number of random variables constitutes a Gaussian distribution**. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form:
+$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))$ where
+$m(\cdot)\,\,,K(\cdot,\cdot)$ are called the mean function and covariance function respectively. By definition in this way, we can get ride of the limitation of the discrete case and the mean and covariance matrix can be calculated for any function
+$f(x)$.
+From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.
+![png](gaussian_prior.png)
+*m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1*
+The figure above shows the 5 functions sampled from the prior distribution of this function. The blue region is
+$\mu\pm\sigma^2$.
+![png](gaussian_posterior.png)
+The above figure demonstrates the functions sampled in the posterior distribution, given three samples
+$(x_1,y_1),(x_2,y_2),(x_3,y_3)$. The thick black line is the mean. It can be seen that, same as in the second part of the 20-dimensional discrete case, the variance around the sample points is almost zero. (Another way to understand the process of combing samples is to reject the functions that do not match these sample points.)
+### 4. Covariance Function (Kernel)
+For given sample
+$X=((x_1),(x_2),...,(x_n)$ (each column is the feature for each sample
+$(x_i)$, then the posterior distribution can be written in the form
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where
+$[K(X,X)]_{ij}=K(x_i,x_j)$.
+Simply starting from the idea of the kernel trick, it is equivalent to quantifies the relationship between points on the feature space induced by the covariance function (though of course the choice of covariance function varies for different situations). Returning to the perspective of the infinite dimensional Gaussian distribution, the covariance function quantifies the relationship between infinitely closed points. In some sense, the covariance function
+$K(\cdot\,\,,\cdot)$ determines the overall shape of the function (from an a priori perspective, the covaraince function expresses the priori knowledge of the desired function).
+The covariance function and the choice of its hyperparameters is a really big topic (all the images above use the squared-exponential covariance function
+$K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2}$). The squared-exponential covariance function is used here as an example for a brief discussion.
+![png](kernel_demo.png)
+The above figure shows when the hyperparameter L in the kernel is small, the correlation between points is smale , and the neighbored points are limited to vary in a small range. (when using this kernel as a priori covariance function, we can imagine that the sampled function will exhibit very large fluctuations). Conversely, when the hyperparameter L is large, one specific point is still correlated with very distant points (The sampled function will be very smooth), and the following figure verifies these descriptions.
+![png](covariance_prior_demo.png)
+*Sample from Gaussian Process by squared-exponential covariance function with different parameter L*
+### 5. Use GP for regression
+Summarizing the above process, a prior is first given for all potential functions by Gaussian process, then, combined with the samples, we obtain the posterior distribution for the function
+$f(X)\sim\mathcal{N}(m(X),K(X,X)$ where
+$[K(X,X)]_{ij}=K(x_i,x_j)$.
+Taken the noise into account, the output function becomes
+$y(X)=f(X)+\sigma^2_yI\,\,,\sigma^2_yI\sim\mathcal{N}(0,1)$ and
+$y(X)\sim\mathcal{N}(m(X),K(X,X)+\sigma^2_y)$.
+**New Question Again: How can we store an infinite dimensional Gaussian distribution in a computer with finite memory? Similarly, for the posterior distribution given samples
+$(X,Y)$, we can see that the parameters are only finite dimensional (the mean is a vector of length n and the covariance matrix is n*n), so does this result contradict or behave inconsistently with the infinite dimensionality?**
+### 6. Consistency and Marginalisation Property
+Both of these problems can be solved perfectly by the **Marginalisation Property** of the Gaussian distribution. For Multivariate Gaussian distribution:
+$$P(Y_1) = \int_{Y_2}P(Y_1,Y_2)dY_2\\ P(Y_1,Y_2) \sim N( \left(\begin{matrix} a\\ b\end{matrix}\right),\left(\begin{matrix} A &amp;B\\ B^T&amp;C \end{matrix}\right))\Rightarrow P(Y_1)\sim N(a, A)$$
+With this property means that we can split only the part of our interest (samples and predictions) from the entire infinite dimensional Gaussian distribution and ignore these parts are not in our interest (no need to interpolation/extrapolation). This property is then used to derive for the distribution of our part of interest. 1. For the first problem, we just need to keep the multivariate Gaussian distribution of the sample part in the computer. 2. For the second problem, it can be seen from the above properties that the parameters of the marginal distribution obtained by partitioning the whole Gaussian distribution are also part of the parameters of the whole Gaussian distribution (or saying derived from the parameters of the infinite-dimensional distribution), thus ensuring consistency with the results of the Gaussian process.
+### 7. Prediction
+Assume
+$Y_1$ is the sample value,
+$Y_2$ is the predicted value and
+$m(x)=0$. By the definition of Gaussian Process,
+$$\Rightarrow P(Y_1(X),Y_2(X))\sim N(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&amp;K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&amp;K(X_{Y_2},X_{Y_2})\end{matrix}\right))$$
+$$\Rightarrow P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}$$
+$$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$$
+![png](predictive_distribution.png)
+Till now, we can calculate the conditional probability distribution to predict
+$Y_2$ given the sample
+$Y_1$. Looking at these two parameters separately,
+- the covariance of the conditional probability:
+$\Sigma_{Y_2|Y_1}=K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2})\Leftrightarrow$ predictive uncertainty = a priori uncertainty - reduced uncertainty after obtaining samples.
+$K(X_{Y_2},X_{Y_2})$ is derived from the covaraince function
+$K(x_i,x_j)$ given in the previous definition of the prior, computed from the given inputs, so it can be seen as uncertainty in the prior.
+$K(X_{Y_1},X_{Y_2})$ is obtained from the inputs corresponding to the predicted values
+$X_{Y_2}$, with the inputs corresponding to the samples
+$X_{Y_1}$ calculated by the covariance function, which quantifies the correlation between the samples and the predicted inputs.
+$K(X_{Y_1},X_{Y_1})$ is the covariance matrix obtained from the sample. If the whole second term of the formula can be seen as the exponential term in the Gaussian distribution, and simply
+$K(X_{Y_2},X_{Y_1})$ as
+$(X_{Y_2}-X_{Y_1})$ (both measure the relationship between points), then it can be interpreted as follows, the higher the correlation with the sample (closer to the mean), the larger the value
+$K(X_{Y_2},X_{Y_1})$ will be. Note the negative sign in the covariance,
+$\Rightarrow$ Reduce more uncertainty
+$\Rightarrow$ Higher correlation with the sample
+$\Rightarrow$ Lower uncertainty of the predicition.
+The mean of marginal distribution:
+$$
+\mu_{Y_2|Y_1}=K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n)^{-1}Y_2\\ =\sum_{i=1}^{n}\alpha_ik(x^{Y_1}_i,x_{pred})\\ (\vec{\alpha}= K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2)
+$$
+It is worth noting that the mean of the entire predictive distribution can be seen as a weighted average of the sample outputs Y1 (in general, the more relevant the sample, the larger the corresponding weight). Also this form coincides with the dual form of L2 regression.
+### 8. Weight Space
+The above has discussed Gaussian regression from the view of function space, and weight space is another perspective to understand.
+![png](bayesian_regression_diagram.png)
+The above figure depicts linear regression from the weight space, which is restricted to a specific functional form with a prior distribution (
+$\mathcal{N}(0,C)$) added to the weights, and the likelihood of the whole form can be written as
+![png](gp_likelihood.png)
+The posterior distribution of the weights can be obtained by integrating the prior distribution of the likelihood and the weights through the Bayesian formula
+![png](gp_weight_posterior.png)
+For a Gaussian distribution, mode = mean, so we obtain the maximum a posteriori estimation
+$=\bar{w}$. Looking at the mean, considering the standard noise case
+$\sigma_n^2=1$, the prior covariance of
+$w$ is
+$\lambda I_n$,which gives the least squares estimate of L2 regression
+$\bar{w}=(XX^T+\lambda I_n)^{-1}Xy$. (In fact, when
+$y$ satisfies the assumption of a Gaussian distribution, the least squares estimate of the parameter
+$w$ is equivalent to the maximum likelihood estimate). The L2 regression can be viewed in a Bayesian way as adding a prior distribution of
+$\mathcal{N}(0,\lambda I_n)$ to the parameter
+$w$ (The L1 regression can be seen as adding a
+$Laplace(0,\frac{1}{\lambda})$ prior to the parameter
+$w$). Furthermore, we can think of a general linear regression as having an uniform prior distribution (improper prior) for parameter
+$w$). Finally, returning to the problem of infinitely possible functions, where the weight space restricts the form/type of the function, it is necessary to construct feature maps explicitly to transform different functional forms. This again aligns the idea of implicit construction of features using the kernel in function space.
+- Reference:
+* [1] C.E.Rasmussen&amp;C.K.I Williams, Gaussian Process for Machine Learning (GPML), 2006
+* [2] CM.Bishop, Pattern Recognition and Machine Learning (PRML), 2006
+* [3] Wilson, Andrew, and Ryan Adams. Gaussian process kernels for pattern discovery and extrapolation, ICML,2013 -->
+&lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
+As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
+## Ecosystem
+- **[Hugo Academic CLI](https://github.com/wowchemy/hugo-academic-cli):** Automatically import publications from BibTeX
+## Inspiration
+[Check out the latest **demo**](https://academic-demo.netlify.com/) of what you'll get in less than 10 minutes, or [view the **showcase**](https://wowchemy.com/user-stories/) of personal, project, and business sites.
+## Features
+- **Page builder** - Create _anything_ with [**widgets**](https://wowchemy.com/docs/page-builder/) and [**elements**](https://wowchemy.com/docs/content/writing-markdown-latex/)
+- **Edit any type of content** - Blog posts, publications, talks, slides, projects, and more!
+- **Create content** in [**Markdown**](https://wowchemy.com/docs/content/writing-markdown-latex/), [**Jupyter**](https://wowchemy.com/docs/import/jupyter/), or [**RStudio**](https://wowchemy.com/docs/install-locally/)
+- **Plugin System** - Fully customizable [**color** and **font themes**](https://wowchemy.com/docs/customization/)
+- **Display Code and Math** - Code highlighting and [LaTeX math](https://en.wikibooks.org/wiki/LaTeX/Mathematics) supported
+- **Integrations** - [Google Analytics](https://analytics.google.com), [Disqus commenting](https://disqus.com), Maps, Contact Forms, and more!
+- **Beautiful Site** - Simple and refreshing one page design
+- **Industry-Leading SEO** - Help get your website found on search engines and social media
+- **Media Galleries** - Display your images and videos with captions in a customizable gallery
+- **Mobile Friendly** - Look amazing on every screen with a mobile friendly version of your site
+- **Multi-language** - 34+ language packs including English, 中文, and Português
+- **Multi-user** - Each author gets their own profile page
+- **Privacy Pack** - Assists with GDPR
+- **Stand Out** - Bring your site to life with animation, parallax backgrounds, and scroll effects
+- **One-Click Deployment** - No servers. No databases. Only files.
+## Themes
+Wowchemy and its templates come with **automatic day (light) and night (dark) mode** built-in. Alternatively, visitors can choose their preferred mode - click the moon icon in the top right of the [Demo](https://academic-demo.netlify.com/) to see it in action! Day/night mode can also be disabled by the site admin in `params.toml`.
+[Choose a stunning **theme** and **font**](https://wowchemy.com/docs/customization) for your site. Themes are fully customizable.
+## License
+Copyright 2016-present [George Cushen](https://georgecushen.com).
+Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license. --></description></item><item><title>From gaussian process back to linear regression</title><link>https://yyimingucl.github.io/post/gpr/</link><pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/gpr/</guid><description>&lt;h1 id="overview">Overview&lt;/h1>
 &lt;p>In regression problem, we are actually looking for a function that maps input
 $x$ to output
 $y$. There are commonly two approaches: 1. We restrict the function space/form (linear, quadratic,&amp;hellip;) and optimize their weights to approximate the true function. The problem with this approach is that we need to decide what kind of functions to use, and if the chosen type of function does not naturally match the underlying function, we can never obatin a well-apprxoimated function by only adjusting the weights. 2. The second considers arbitrary functions and chooses the one that fits the given sample
@@ -176,10 +358,10 @@ $x_1,x_2$.
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_3747dd93f11ee0bd224a6f8f8f786882.webp 400w,
-/post/getting-started/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_e479320415b21d1605f06ad243e31cb6.webp 760w,
-/post/getting-started/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_3747dd93f11ee0bd224a6f8f8f786882.webp"
+/post/gpr/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_3747dd93f11ee0bd224a6f8f8f786882.webp 400w,
+/post/gpr/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_e479320415b21d1605f06ad243e31cb6.webp 760w,
+/post/gpr/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/2d_gaussian_cov0_huea498599102b864f1c3e8ae5de1c4a5d_47483_3747dd93f11ee0bd224a6f8f8f786882.webp"
 width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
@@ -188,10 +370,10 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_e73a2b196d631caf75fc76a53b058ca8.webp 400w,
-/post/getting-started/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_cf0c856d4472984b4a43237d0404f514.webp 760w,
-/post/getting-started/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_e73a2b196d631caf75fc76a53b058ca8.webp"
+/post/gpr/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_e73a2b196d631caf75fc76a53b058ca8.webp 400w,
+/post/gpr/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_cf0c856d4472984b4a43237d0404f514.webp 760w,
+/post/gpr/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/2d_gaussian_cov0.7_huc876f75d4645b4db463d9003e45a3853_45908_e73a2b196d631caf75fc76a53b058ca8.webp"
 width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
@@ -200,10 +382,10 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c8ad0e440fc78778d04f3144c4f9b0cd.webp 400w,
-/post/getting-started/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c6fc88e86678dabdb3d3e319caf0fcfd.webp 760w,
-/post/getting-started/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c8ad0e440fc78778d04f3144c4f9b0cd.webp"
+/post/gpr/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c8ad0e440fc78778d04f3144c4f9b0cd.webp 400w,
+/post/gpr/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c6fc88e86678dabdb3d3e319caf0fcfd.webp 760w,
+/post/gpr/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/2d_gaussian_cov0.95_hub8ece08e22daa649a647f218f2872f8f_38769_c8ad0e440fc78778d04f3144c4f9b0cd.webp"
 width="608"
 height="353"
 loading="lazy" data-zoomable />&lt;/div>
@@ -220,10 +402,10 @@ $x_2$.&lt;/p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_9a21ff4f7208871dbca5533da46ca197.webp 400w,
-/post/getting-started/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_aed4ff7f6dbca320452b6dadfe614fd3.webp 760w,
-/post/getting-started/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_9a21ff4f7208871dbca5533da46ca197.webp"
+/post/gpr/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_9a21ff4f7208871dbca5533da46ca197.webp 400w,
+/post/gpr/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_aed4ff7f6dbca320452b6dadfe614fd3.webp 760w,
+/post/gpr/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/finite_sample_demo_hu304a5f27892917a64a09be6e5e281a14_38713_9a21ff4f7208871dbca5533da46ca197.webp"
 width="760"
 height="247"
 loading="lazy" data-zoomable />&lt;/div>
@@ -235,10 +417,10 @@ $(x_1,x_2,...x_{20})$ obtained from a 20-dimensional Gaussian distribution (Do t
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_3764b327f86795c728138c48652c72d2.webp 400w,
-/post/getting-started/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_54b4732790393aa3287fe5d344e9cb64.webp 760w,
-/post/getting-started/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_3764b327f86795c728138c48652c72d2.webp"
+/post/gpr/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_3764b327f86795c728138c48652c72d2.webp 400w,
+/post/gpr/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_54b4732790393aa3287fe5d344e9cb64.webp 760w,
+/post/gpr/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/finite_sample_with_fixed_dim_hu8ecd30d95359737e48db0127e80d2a3d_30925_3764b327f86795c728138c48652c72d2.webp"
 width="608"
 height="307"
 loading="lazy" data-zoomable />&lt;/div>
@@ -248,10 +430,10 @@ $(x_{3:20}|x_1,x_2\sim Gaussian)$ remains a Gaussian distribution according to t
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp 400w,
-/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_3810a2271173a8af29ba23f96ff14088.webp 760w,
-/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp"
+/post/gpr/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp 400w,
+/post/gpr/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_3810a2271173a8af29ba23f96ff14088.webp 760w,
+/post/gpr/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/error_bar_hu90e3d8dc78c5f82f3285083678798f3e_6255_b1339589bc5fcd05a732794381e78755.webp"
 width="370"
 height="248"
 loading="lazy" data-zoomable />&lt;/div>
@@ -267,10 +449,10 @@ $f(x)$.&lt;/p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp 400w,
-/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1c1aea4b4a43d3d43ec8b71d775436af.webp 760w,
-/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp"
+/post/gpr/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp 400w,
+/post/gpr/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1c1aea4b4a43d3d43ec8b71d775436af.webp 760w,
+/post/gpr/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/gaussian_prior_hud7777d377f3db6a0568c29ec18840e6e_30459_4cb7dc7eedcd74263e1925838a09ca47.webp"
 width="370"
 height="264"
 loading="lazy" data-zoomable />&lt;/div>
@@ -281,10 +463,10 @@ $\mu\pm\sigma^2$.
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp 400w,
-/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_cc9c723220ba9373755f149f00973496.webp 760w,
-/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp"
+/post/gpr/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp 400w,
+/post/gpr/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_cc9c723220ba9373755f149f00973496.webp 760w,
+/post/gpr/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/gaussian_posterior_huf485d44c49a3bc36b3f14fa3e0e692ec_30754_df1a773d22f2e5ffa1212036f783908f.webp"
 width="370"
 height="248"
 loading="lazy" data-zoomable />&lt;/div>
@@ -304,10 +486,10 @@ $K(x_i,x_j)=\alpha\exp{-\frac{1}{2l^2}( x_i-x_j)^2}$). The squared-exponential c
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp 400w,
-/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_23462f43502174721c04e8a2075ffe89.webp 760w,
-/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp"
+/post/gpr/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp 400w,
+/post/gpr/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_23462f43502174721c04e8a2075ffe89.webp 760w,
+/post/gpr/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/kernel_demo_hueaf4a594b5b1a8d89aecc31c154ae84e_55936_e48cc6091b698651e8fda2ee7aeada97.webp"
 width="760"
 height="512"
 loading="lazy" data-zoomable />&lt;/div>
@@ -316,10 +498,10 @@ The above figure shows when the hyperparameter L in the kernel is small, the cor
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp 400w,
-/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_078d5070fca6a837e843d92106d91ec1.webp 760w,
-/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp"
+/post/gpr/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp 400w,
+/post/gpr/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_078d5070fca6a837e843d92106d91ec1.webp 760w,
+/post/gpr/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/covariance_prior_demo_hu6f2e013cd432de7cf5ef3d9b48c51574_97954_e3fa0fe4b55a62493efd227452f7898d.webp"
 width="760"
 height="471"
 loading="lazy" data-zoomable />&lt;/div>
@@ -349,10 +531,10 @@ $$\Rightarrow P(Y_2|Y_1) \sim N(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp 400w,
-/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_c8391795b87ddd0adc204f10431f8ae8.webp 760w,
-/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp"
+/post/gpr/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp 400w,
+/post/gpr/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_c8391795b87ddd0adc204f10431f8ae8.webp 760w,
+/post/gpr/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/predictive_distribution_hu8ab9778db2a2e30b50b70e14880517f2_25815_7c139aad98998130b0e13d7357814614.webp"
 width="228"
 height="174"
 loading="lazy" data-zoomable />&lt;/div>
@@ -387,10 +569,10 @@ It is worth noting that the mean of the entire predictive distribution can be se
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp 400w,
-/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_25a6fce1a6fb0abd787b4921a3e49ae2.webp 760w,
-/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp"
+/post/gpr/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp 400w,
+/post/gpr/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_25a6fce1a6fb0abd787b4921a3e49ae2.webp 760w,
+/post/gpr/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/bayesian_regression_diagram_hu4960825754a5dd1aeb1427d3c3179a30_28706_187ead7188237b7e5859f55b47cfbcb8.webp"
 width="505"
 height="315"
 loading="lazy" data-zoomable />&lt;/div>
@@ -400,10 +582,10 @@ $\mathcal{N}(0,C)$) added to the weights, and the likelihood of the whole form c
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp 400w,
-/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_9af037b5cbaff6333035c5b823543383.webp 760w,
-/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp"
+/post/gpr/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp 400w,
+/post/gpr/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_9af037b5cbaff6333035c5b823543383.webp 760w,
+/post/gpr/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/gp_likelihood_hu5ef13cff57228661b6915e952a6e5d38_29803_bf541e315289d0e7446c3857a8b0a721.webp"
 width="647"
 height="138"
 loading="lazy" data-zoomable />&lt;/div>
@@ -412,10 +594,10 @@ The posterior distribution of the weights can be obtained by integrating the pri
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
 &lt;div class="w-100" >&lt;img alt="png" srcset="
-/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp 400w,
-/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_4b8e597238208c47317fc2901808229e.webp 760w,
-/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
-src="https://yyimingucl.github.io/post/getting-started/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp"
+/post/gpr/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp 400w,
+/post/gpr/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_4b8e597238208c47317fc2901808229e.webp 760w,
+/post/gpr/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpr/gp_weight_posterior_huf9fe8095cbd6ebafe21888650e13846c_78890_5457a724f0ffe34074582d561d300975.webp"
 width="720"
 height="263"
 loading="lazy" data-zoomable />&lt;/div>
@@ -469,356 +651,8 @@ Wowchemy and its templates come with **automatic day (light) and night (dark) mo
 [Choose a stunning **theme** and **font**](https://wowchemy.com/docs/customization) for your site. Themes are fully customizable.
 ## License
 Copyright 2016-present [George Cushen](https://georgecushen.com).
-Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license. --></description></item><item><title>Writing technical content in Markdown</title><link>https://yyimingucl.github.io/post/writing-technical-content/</link><pubDate>Fri, 12 Jul 2019 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/writing-technical-content/</guid><description>&lt;p>Wowchemy is designed to give technical content creators a seamless experience. You can focus on the content and Wowchemy handles the rest.&lt;/p>
-&lt;p>&lt;strong>Highlight your code snippets, take notes on math classes, and draw diagrams from textual representation.&lt;/strong>&lt;/p>
-&lt;p>On this page, you&amp;rsquo;ll find some examples of the types of technical content that can be rendered with Wowchemy.&lt;/p>
-&lt;h2 id="examples">Examples&lt;/h2>
-&lt;h3 id="code">Code&lt;/h3>
-&lt;p>Wowchemy supports a Markdown extension for highlighting code syntax. You can customize the styles under the &lt;code>syntax_highlighter&lt;/code> option in your &lt;code>config/_default/params.yaml&lt;/code> file.&lt;/p>
-&lt;pre>&lt;code>```python
-import pandas as pd
-data = pd.read_csv(&amp;quot;data.csv&amp;quot;)
-data.head()
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">pandas&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="nn">pd&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pd&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">read_csv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;data.csv&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">head&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="mindmaps">Mindmaps&lt;/h3>
-&lt;p>Wowchemy supports a Markdown extension for mindmaps.&lt;/p>
-&lt;p>Simply insert a Markdown &lt;code>markmap&lt;/code> code block and optionally set the height of the mindmap as shown in the example below.&lt;/p>
-&lt;p>A simple mindmap defined as a Markdown list:&lt;/p>
-&lt;div class="highlight">
-&lt;pre class="chroma">
-&lt;code>
-```markmap {height="200px"}
-- Hugo Modules
-- wowchemy
-- wowchemy-plugins-netlify
-- wowchemy-plugins-netlify-cms
-- wowchemy-plugins-reveal
-```
-&lt;/code>
-&lt;/pre>
-&lt;/div>
-&lt;p>renders as&lt;/p>
-&lt;div class="markmap" style="height: 200px;">
-&lt;pre>- Hugo Modules
-- wowchemy
-- wowchemy-plugins-netlify
-- wowchemy-plugins-netlify-cms
-- wowchemy-plugins-reveal&lt;/pre>
-&lt;/div>
-&lt;p>A more advanced mindmap with formatting, code blocks, and math:&lt;/p>
-&lt;div class="highlight">
-&lt;pre class="chroma">
-&lt;code>
-```markmap
-- Mindmaps
-- Links
-- [Wowchemy Docs](https://wowchemy.com/docs/)
-- [Discord Community](https://discord.gg/z8wNYzb)
-- [GitHub](https://github.com/wowchemy/wowchemy-hugo-themes)
-- Features
-- Markdown formatting
-- **inline** ~~text~~ *styles*
-- multiline
-text
-- `inline code`
--
-```js
-console.log('hello');
-console.log('code block');
-```
-- Math: $x = {-b \pm \sqrt{b^2-4ac} \over 2a}$
-```
-&lt;/code>
-&lt;/pre>
-&lt;/div>
-&lt;p>renders as&lt;/p>
-&lt;div class="markmap" style="height: 500px;">
-&lt;pre>- Mindmaps
-- Links
-- [Wowchemy Docs](https://wowchemy.com/docs/)
-- [Discord Community](https://discord.gg/z8wNYzb)
-- [GitHub](https://github.com/wowchemy/wowchemy-hugo-themes)
-- Features
-- Markdown formatting
-- **inline** ~~text~~ *styles*
-- multiline
-text
-- `inline code`
--
-```js
-console.log('hello');
-console.log('code block');
-```
-- Math: $x = {-b \pm \sqrt{b^2-4ac} \over 2a}$&lt;/pre>
-&lt;/div>
-&lt;h3 id="charts">Charts&lt;/h3>
-&lt;p>Wowchemy supports the popular &lt;a href="https://plot.ly/" target="_blank" rel="noopener">Plotly&lt;/a> format for interactive charts.&lt;/p>
-&lt;p>Save your Plotly JSON in your page folder, for example &lt;code>line-chart.json&lt;/code>, and then add the &lt;code>{{&amp;lt; chart data=&amp;quot;line-chart&amp;quot; &amp;gt;}}&lt;/code> shortcode where you would like the chart to appear.&lt;/p>
-&lt;p>Demo:&lt;/p>
-&lt;div id="chart-964128375" class="chart">&lt;/div>
-&lt;script>
-(function() {
-let a = setInterval( function() {
-if ( typeof window.Plotly === 'undefined' ) {
-return;
-}
-clearInterval( a );
-Plotly.d3.json("./line-chart.json", function(chart) {
-Plotly.plot('chart-964128375', chart.data, chart.layout, {responsive: true});
-});
-}, 500 );
-})();
-&lt;/script>
-&lt;p>You might also find the &lt;a href="http://plotly-json-editor.getforge.io/" target="_blank" rel="noopener">Plotly JSON Editor&lt;/a> useful.&lt;/p>
-&lt;h3 id="math">Math&lt;/h3>
-&lt;p>Wowchemy supports a Markdown extension for $\LaTeX$ math. You can enable this feature by toggling the &lt;code>math&lt;/code> option in your &lt;code>config/_default/params.yaml&lt;/code> file.&lt;/p>
-&lt;p>To render &lt;em>inline&lt;/em> or &lt;em>block&lt;/em> math, wrap your LaTeX math with &lt;code>{{&amp;lt; math &amp;gt;}}$...${{&amp;lt; /math &amp;gt;}}&lt;/code> or &lt;code>{{&amp;lt; math &amp;gt;}}$$...$${{&amp;lt; /math &amp;gt;}}&lt;/code>, respectively. (We wrap the LaTeX math in the Wowchemy &lt;em>math&lt;/em> shortcode to prevent Hugo rendering our math as Markdown. The &lt;em>math&lt;/em> shortcode is new in v5.5-dev.)&lt;/p>
-&lt;p>Example &lt;strong>math block&lt;/strong>:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-latex" data-lang="latex">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">{{&lt;/span>&amp;lt; math &amp;gt;&lt;span class="nb">}}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sb">$$&lt;/span>&lt;span class="nb">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">&lt;/span>&lt;span class="nv">\gamma&lt;/span>&lt;span class="nb">_{n} &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\frac&lt;/span>&lt;span class="nb">{ &lt;/span>&lt;span class="nv">\left&lt;/span>&lt;span class="nb"> | &lt;/span>&lt;span class="nv">\left&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb"> x_{n} &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb"> x_{n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="nb">} &lt;/span>&lt;span class="nv">\right&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb">^T &lt;/span>&lt;span class="nv">\left&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="nv">\nabla&lt;/span>&lt;span class="nb"> F &lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb"> x_{n}&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\nabla&lt;/span>&lt;span class="nb"> F &lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb"> x_{n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="nb">}&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\right&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\right&lt;/span>&lt;span class="nb"> |}{&lt;/span>&lt;span class="nv">\left&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\|\nabla&lt;/span>&lt;span class="nb"> F&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb">{x}_{n}&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\nabla&lt;/span>&lt;span class="nb"> F&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nv">\mathbf&lt;/span>&lt;span class="nb">{x}_{n&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="nb">}&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\right&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\|&lt;/span>&lt;span class="nb">^&lt;/span>&lt;span class="m">2&lt;/span>&lt;span class="nb">}
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">&lt;/span>&lt;span class="s">$$&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">{{&lt;/span>&amp;lt; /math &amp;gt;&lt;span class="nb">}}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-$$\gamma_{n} = \frac{ \left | \left (\mathbf x_{n} - \mathbf x_{n-1} \right )^T \left [\nabla F (\mathbf x_{n}) - \nabla F (\mathbf x_{n-1}) \right ] \right |}{\left \|\nabla F(\mathbf{x}_{n}) - \nabla F(\mathbf{x}_{n-1}) \right \|^2}$$
-&lt;p>Example &lt;strong>inline math&lt;/strong> &lt;code>{{&amp;lt; math &amp;gt;}}$\nabla F(\mathbf{x}_{n})${{&amp;lt; /math &amp;gt;}}&lt;/code> renders as
-$\nabla F(\mathbf{x}_{n})$.&lt;/p>
-&lt;p>Example &lt;strong>multi-line math&lt;/strong> using the math linebreak (&lt;code>\\&lt;/code>):&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-latex" data-lang="latex">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">{{&lt;/span>&amp;lt; math &amp;gt;&lt;span class="nb">}}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sb">$$&lt;/span>&lt;span class="nb">f&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="nb">k;p_{&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="nb">}^{&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nb">}&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb"> &lt;/span>&lt;span class="nv">\begin&lt;/span>&lt;span class="nb">{cases}p_{&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="nb">}^{&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nb">} &amp;amp; &lt;/span>&lt;span class="nv">\text&lt;/span>&lt;span class="nb">{if }k&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="nb">, &lt;/span>&lt;span class="nv">\\&lt;/span>&lt;span class="nb">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nb">p_{&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="nb">}^{&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nb">} &amp;amp; &lt;/span>&lt;span class="nv">\text&lt;/span>&lt;span class="nb">{if }k&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="nb">.&lt;/span>&lt;span class="nv">\end&lt;/span>&lt;span class="nb">{cases}&lt;/span>&lt;span class="s">$$&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">{{&lt;/span>&amp;lt; /math &amp;gt;&lt;span class="nb">}}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-$$
-f(k;p_{0}^{*}) = \begin{cases}p_{0}^{*} &amp; \text{if }k=1, \\
-1-p_{0}^{*} &amp; \text{if }k=0.\end{cases}
-$$
-&lt;h3 id="diagrams">Diagrams&lt;/h3>
-&lt;p>Wowchemy supports a Markdown extension for diagrams. You can enable this feature by toggling the &lt;code>diagram&lt;/code> option in your &lt;code>config/_default/params.toml&lt;/code> file or by adding &lt;code>diagram: true&lt;/code> to your page front matter.&lt;/p>
-&lt;p>An example &lt;strong>flowchart&lt;/strong>:&lt;/p>
-&lt;pre>&lt;code>```mermaid
-graph TD
-A[Hard] --&amp;gt;|Text| B(Round)
-B --&amp;gt; C{Decision}
-C --&amp;gt;|One| D[Result 1]
-C --&amp;gt;|Two| E[Result 2]
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="mermaid">graph TD
-A[Hard] -->|Text| B(Round)
-B --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-&lt;/div>
-&lt;p>An example &lt;strong>sequence diagram&lt;/strong>:&lt;/p>
-&lt;pre>&lt;code>```mermaid
-sequenceDiagram
-Alice-&amp;gt;&amp;gt;John: Hello John, how are you?
-loop Healthcheck
-John-&amp;gt;&amp;gt;John: Fight against hypochondria
-end
-Note right of John: Rational thoughts!
-John--&amp;gt;&amp;gt;Alice: Great!
-John-&amp;gt;&amp;gt;Bob: How about you?
-Bob--&amp;gt;&amp;gt;John: Jolly good!
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="mermaid">sequenceDiagram
-Alice->>John: Hello John, how are you?
-loop Healthcheck
-John->>John: Fight against hypochondria
-end
-Note right of John: Rational thoughts!
-John-->>Alice: Great!
-John->>Bob: How about you?
-Bob-->>John: Jolly good!
-&lt;/div>
-&lt;p>An example &lt;strong>Gantt diagram&lt;/strong>:&lt;/p>
-&lt;pre>&lt;code>```mermaid
-gantt
-section Section
-Completed :done, des1, 2014-01-06,2014-01-08
-Active :active, des2, 2014-01-07, 3d
-Parallel 1 : des3, after des1, 1d
-Parallel 2 : des4, after des1, 1d
-Parallel 3 : des5, after des3, 1d
-Parallel 4 : des6, after des4, 1d
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="mermaid">gantt
-section Section
-Completed :done, des1, 2014-01-06,2014-01-08
-Active :active, des2, 2014-01-07, 3d
-Parallel 1 : des3, after des1, 1d
-Parallel 2 : des4, after des1, 1d
-Parallel 3 : des5, after des3, 1d
-Parallel 4 : des6, after des4, 1d
-&lt;/div>
-&lt;p>An example &lt;strong>class diagram&lt;/strong>:&lt;/p>
-&lt;pre>&lt;code>```mermaid
-classDiagram
-Class01 &amp;lt;|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
-Class07 .. Class08
-Class09 --&amp;gt; C2 : Where am i?
-Class09 --* C3
-Class09 --|&amp;gt; Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-Class08 &amp;lt;--&amp;gt; C2: Cool label
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="mermaid">classDiagram
-Class01 &lt;|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
-Class07 .. Class08
-Class09 --> C2 : Where am i?
-Class09 --* C3
-Class09 --|> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-Class08 &lt;--> C2: Cool label
-&lt;/div>
-&lt;p>An example &lt;strong>state diagram&lt;/strong>:&lt;/p>
-&lt;pre>&lt;code>```mermaid
-stateDiagram
-[*] --&amp;gt; Still
-Still --&amp;gt; [*]
-Still --&amp;gt; Moving
-Moving --&amp;gt; Still
-Moving --&amp;gt; Crash
-Crash --&amp;gt; [*]
-```
-&lt;/code>&lt;/pre>
-&lt;p>renders as&lt;/p>
-&lt;div class="mermaid">stateDiagram
-[*] --> Still
-Still --> [*]
-Still --> Moving
-Moving --> Still
-Moving --> Crash
-Crash --> [*]
-&lt;/div>
-&lt;h3 id="todo-lists">Todo lists&lt;/h3>
-&lt;p>You can even write your todo lists in Markdown too:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">&lt;span class="line">&lt;span class="cl">&lt;span class="k">- [x]&lt;/span> Write math example
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">- [x]&lt;/span> Write diagram example
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">- [ ]&lt;/span> Do something else
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-&lt;ul>
-&lt;li>&lt;input checked="" disabled="" type="checkbox"> Write math example
-&lt;ul>
-&lt;li>&lt;input checked="" disabled="" type="checkbox"> Write diagram example&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;input disabled="" type="checkbox"> Do something else&lt;/li>
-&lt;/ul>
-&lt;h3 id="tables">Tables&lt;/h3>
-&lt;p>Save your spreadsheet as a CSV file in your page&amp;rsquo;s folder and then render it by adding the &lt;em>Table&lt;/em> shortcode to your page:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{{&amp;lt;&lt;/span> &lt;span class="nx">table&lt;/span> &lt;span class="nx">path&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s">&amp;#34;results.csv&amp;#34;&lt;/span> &lt;span class="nx">header&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s">&amp;#34;true&amp;#34;&lt;/span> &lt;span class="nx">caption&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s">&amp;#34;Table 1: My results&amp;#34;&lt;/span> &lt;span class="p">&amp;gt;}}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-&lt;table class="table">
-&lt;tr> &lt;th>customer_id&lt;/th> &lt;th>score&lt;/th> &lt;/tr>
-&lt;tr>
-&lt;td data-table-dtype="number">1&lt;/td>
-&lt;td data-table-dtype="number">0&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td data-table-dtype="number">2&lt;/td>
-&lt;td data-table-dtype="text">0.5&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td data-table-dtype="number">3&lt;/td>
-&lt;td data-table-dtype="number">1&lt;/td>
-&lt;/tr>
-&lt;caption>Table 1: My results&lt;/caption>
-&lt;/table>
-&lt;h3 id="callouts">Callouts&lt;/h3>
-&lt;p>Academic supports a &lt;a href="https://wowchemy.com/docs/content/writing-markdown-latex/#callouts" target="_blank" rel="noopener">shortcode for callouts&lt;/a>, also referred to as &lt;em>asides&lt;/em>, &lt;em>hints&lt;/em>, or &lt;em>alerts&lt;/em>. By wrapping a paragraph in &lt;code>{{% callout note %}} ... {{% /callout %}}&lt;/code>, it will render as an aside.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">&lt;span class="line">&lt;span class="cl">{{% callout note %}}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">A Markdown aside is useful for displaying notices, hints, or definitions to your readers.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{{% /callout %}}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-&lt;div class="alert alert-note">
-&lt;div>
-A Markdown aside is useful for displaying notices, hints, or definitions to your readers.
-&lt;/div>
-&lt;/div>
-&lt;h3 id="spoilers">Spoilers&lt;/h3>
-&lt;p>Add a spoiler to a page to reveal text, such as an answer to a question, after a button is clicked.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">&lt;span class="line">&lt;span class="cl">{{&lt;span class="p">&amp;lt;&lt;/span> &lt;span class="nt">spoiler&lt;/span> &lt;span class="na">text&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;Click to view the spoiler&amp;#34;&lt;/span> &lt;span class="p">&amp;gt;&lt;/span>}}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">You found me!
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{{&lt;span class="p">&amp;lt;&lt;/span> &lt;span class="p">/&lt;/span>&lt;span class="nt">spoiler&lt;/span> &lt;span class="p">&amp;gt;&lt;/span>}}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-&lt;details class="spoiler " id="spoiler-6">
-&lt;summary>Click to view the spoiler&lt;/summary>
-&lt;p>You found me!&lt;/p>
-&lt;/details>
-&lt;h3 id="icons">Icons&lt;/h3>
-&lt;p>Academic enables you to use a wide range of &lt;a href="https://wowchemy.com/docs/getting-started/page-builder/#icons" target="_blank" rel="noopener">icons from &lt;em>Font Awesome&lt;/em> and &lt;em>Academicons&lt;/em>&lt;/a> in addition to &lt;a href="https://wowchemy.com/docs/content/writing-markdown-latex/#emojis" target="_blank" rel="noopener">emojis&lt;/a>.&lt;/p>
-&lt;p>Here are some examples using the &lt;code>icon&lt;/code> shortcode to render icons:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">&lt;span class="line">&lt;span class="cl">{{&lt;span class="p">&amp;lt;&lt;/span> &lt;span class="nt">icon&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;terminal&amp;#34;&lt;/span> &lt;span class="na">pack&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;fas&amp;#34;&lt;/span> &lt;span class="p">&amp;gt;&lt;/span>}} Terminal
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{{&lt;span class="p">&amp;lt;&lt;/span> &lt;span class="nt">icon&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;python&amp;#34;&lt;/span> &lt;span class="na">pack&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;fab&amp;#34;&lt;/span> &lt;span class="p">&amp;gt;&lt;/span>}} Python
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{{&lt;span class="p">&amp;lt;&lt;/span> &lt;span class="nt">icon&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;r-project&amp;#34;&lt;/span> &lt;span class="na">pack&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;fab&amp;#34;&lt;/span> &lt;span class="p">&amp;gt;&lt;/span>}} R
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>renders as&lt;/p>
-&lt;p>
-&lt;i class="fas fa-terminal pr-1 fa-fw">&lt;/i> Terminal&lt;br>
-&lt;i class="fab fa-python pr-1 fa-fw">&lt;/i> Python&lt;br>
-&lt;i class="fab fa-r-project pr-1 fa-fw">&lt;/i> R&lt;/p>
-&lt;h3 id="did-you-find-this-page-helpful-consider-sharing-it-">Did you find this page helpful? Consider sharing it 🙌&lt;/h3></description></item><item><title>Display Jupyter Notebooks with Academic</title><link>https://yyimingucl.github.io/post/jupyter/</link><pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/post/jupyter/</guid><description>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">IPython.core.display&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">Image&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Image&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>
-&lt;figure >
-&lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="./index_1_0.png" alt="png" loading="lazy" data-zoomable />&lt;/div>
-&lt;/div>&lt;/figure>
-&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Welcome to Academic!&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Welcome to Academic!
-&lt;/code>&lt;/pre>
-&lt;h2 id="install-python-and-jupyterlab">Install Python and JupyterLab&lt;/h2>
-&lt;p>&lt;a href="https://www.anaconda.com/distribution/#download-section" target="_blank" rel="noopener">Install Anaconda&lt;/a> which includes Python 3 and JupyterLab.&lt;/p>
-&lt;p>Alternatively, install JupyterLab with &lt;code>pip3 install jupyterlab&lt;/code>.&lt;/p>
-&lt;h2 id="create-or-upload-a-jupyter-notebook">Create or upload a Jupyter notebook&lt;/h2>
-&lt;p>Run the following commands in your Terminal, substituting &lt;code>&amp;lt;MY-WEBSITE-FOLDER&amp;gt;&lt;/code> and &lt;code>&amp;lt;SHORT-POST-TITLE&amp;gt;&lt;/code> with the file path to your Academic website folder and a short title for your blog post (use hyphens instead of spaces), respectively:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">mkdir -p &amp;lt;MY-WEBSITE-FOLDER&amp;gt;/content/post/&amp;lt;SHORT-POST-TITLE&amp;gt;/
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> &amp;lt;MY-WEBSITE-FOLDER&amp;gt;/content/post/&amp;lt;SHORT-POST-TITLE&amp;gt;/
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jupyter lab index.ipynb
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>jupyter&lt;/code> command above will launch the JupyterLab editor, allowing us to add Academic metadata and write the content.&lt;/p>
-&lt;h2 id="edit-your-post-metadata">Edit your post metadata&lt;/h2>
-&lt;p>The first cell of your Jupter notebook will contain your post metadata (&lt;a href="https://sourcethemes.com/academic/docs/front-matter/" target="_blank" rel="noopener">front matter&lt;/a>).&lt;/p>
-&lt;p>In Jupter, choose &lt;em>Markdown&lt;/em> as the type of the first cell and wrap your Academic metadata in three dashes, indicating that it is YAML front matter:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">---
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">title: My post&amp;#39;s title
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">date: 2019-09-01
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Put any other Academic metadata here...
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Edit the metadata of your post, using the &lt;a href="https://sourcethemes.com/academic/docs/managing-content" target="_blank" rel="noopener">documentation&lt;/a> as a guide to the available options.&lt;/p>
-&lt;p>To set a &lt;a href="https://sourcethemes.com/academic/docs/managing-content/#featured-image" target="_blank" rel="noopener">featured image&lt;/a>, place an image named &lt;code>featured&lt;/code> into your post&amp;rsquo;s folder.&lt;/p>
-&lt;p>For other tips, such as using math, see the guide on &lt;a href="https://wowchemy.com/docs/content/writing-markdown-latex/" target="_blank" rel="noopener">writing content with Academic&lt;/a>.&lt;/p>
-&lt;h2 id="convert-notebook-to-markdown">Convert notebook to Markdown&lt;/h2>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jupyter nbconvert index.ipynb --to markdown --NbConvertApp.output_files_dir&lt;span class="o">=&lt;/span>.
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="example">Example&lt;/h2>
-&lt;p>This post was created with Jupyter. The orginal files can be found at &lt;a href="https://github.com/gcushen/hugo-academic/tree/master/exampleSite/content/post/jupyter" target="_blank" rel="noopener">https://github.com/gcushen/hugo-academic/tree/master/exampleSite/content/post/jupyter&lt;/a>&lt;/p></description></item><item><title>Example Project</title><link>https://yyimingucl.github.io/project/example/</link><pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/project/example/</guid><description>&lt;p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p>
+Released under the [MIT](https://github.com/wowchemy/wowchemy-hugo-themes/blob/master/LICENSE.md) license. --></description></item><item><title>Example Project</title><link>https://yyimingucl.github.io/project/example/</link><pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/project/example/</guid><description>&lt;p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p>
 &lt;p>Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p>
 &lt;p>Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p>
 &lt;p>Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p>
-&lt;p>Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p></description></item><item><title>External Project</title><link>https://yyimingucl.github.io/project/external-project/</link><pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/project/external-project/</guid><description/></item><item><title/><link>https://yyimingucl.github.io/admin/config.yml</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/admin/config.yml</guid><description/></item><item><title/><link>https://yyimingucl.github.io/publication/conference-paper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/publication/conference-paper/</guid><description/></item></channel></rss>
+&lt;p>Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p></description></item><item><title>External Project</title><link>https://yyimingucl.github.io/project/external-project/</link><pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/project/external-project/</guid><description/></item><item><title/><link>https://yyimingucl.github.io/admin/config.yml</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://yyimingucl.github.io/admin/config.yml</guid><description/></item></channel></rss>
