@@ -6,7 +6,7 @@ $y$&amp;rsquo;. However, compared to regression problems, Gaussian processes enc
 &lt;p>A Gaussian process is a stochastic process where any point
 $x\in R^d$ is assigned a random variable
 $f$ and the joint distribution of these variables follows a Gaussian distribution
-$f|x\sim/mathcal{N}(\mu,K)$. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function
+$f|x\sim\mathcal{N}(\mu,K)$. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function
 $\mu$ and the covariance
 $K=k(X,X)$ where k is a parameterized kernel function. For
 $\mu$, we generally set it to 0 (ie.
@@ -72,7 +72,7 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;/p>
 &lt;h2 id="3-gaussian-process-classification-gpc">3. Gaussian Process Classification (GPC)&lt;/h2>
 &lt;p>For distinctions, we denote the regression variable of the Gaussian process as the (latent) variable
-$f: f|x \sim /mathcal{N}(\mu, K)$. With the response function
+$f: f|x \sim \mathcal{N}(\mu, K)$. With the response function
 $\sigma$ introduced in the previous paragraph, we can obtain the likelihood function. For a sample
 $(xi, yi)$, their likelihood is given by:
 $$
@@ -115,7 +115,18 @@ $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
-\begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$}\\ &amp; \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx\\ &amp;\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\&amp; \text{then we can get the approximate of desired integral} \end{split}
+\begin{split}
+&amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\
+&amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\
+&amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\
+&amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\
+&amp;\text{we know $g(x)$ will be maximum at $x_0$}\\
+&amp; \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\
+&amp;\Rightarrow\int_a^bg(x)\,dx\approx\\
+&amp;\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\
+&amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\
+&amp; \text{then we can get the approximate of desired integral}
+\end{split}
 $$
 &lt;/p>
 &lt;h3 id="42-posterior-distribution-hahahugoshortcodes78hbhb">4.2 Posterior distribution
