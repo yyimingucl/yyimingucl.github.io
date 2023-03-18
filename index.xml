@@ -29,15 +29,18 @@ $x^*$. The joint distribution of the observed values
 $y$ and the predicted value
 $f^*$ is a Gaussian distribution, which has the following form:
 $$
-y,f^*|X,x^*\sim/mathcal{N}(\begin{bmatrix} y\\ f^*\\ \end{bmatrix}|\,0,\begin{bmatrix} K_y&amp;k_*\\ k_*&amp;k_{**}\\ \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
+y,f^*|X,x^*\sim\mathcal{N}(\begin{bmatrix} y\\ f^*\\ \end{bmatrix}|\,0,\begin{bmatrix} K_y&amp;k_*\\ k_*&amp;k_{**}\\ \end{bmatrix})\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 1.})
 $$
 $K_y=K+\sigma_y^2I$,
-$k_*=/mathcal{k}(X,x_*)$, and
-$k_{**}=/mathcal{k}(x^*,\bm{x}^*)$.
+$k_*=k(X,x_*)$, and
+$k_{**}=k(x^*,x^*)$.
 $\sigma_y^*$ is used to model the noise in the observed values. By applying Bayes&amp;rsquo; theorem to the joint distribution above, we obtain the predictive distribution for
 $f^*$:
 $$
-f^*|x_*,X,y\sim/mathcal{N}(f^*|\mu_*,\Sigma_*),\,\,\,\,\mu_*=k_*^TK_y^{-1}y\,\,,\,\Sigma_*=k_{**}-k_*^TK_y^{-1}k_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
+f^*|x_*,X,y\sim\mathcal{N}(f^*|\mu_*,\Sigma_*)
+$$
+$$
+\text{where}\,\,\mu_*=k_*^TK_y^{-1}y\,\,,\,\Sigma_*=k_{**}-k_*^TK_y^{-1}k_*\,\,\,\,\,\,\,\,\,\,\,\,(\text{Recap 2.})
 $$
 You can check the &lt;a href="https://yyimingucl.github.io/post/gpr/" target="_blank" rel="noopener">previous article&lt;/a> for more information.&lt;/p>
 &lt;h2 id="2-binary-classifcation-problem">2. Binary Classifcation Problem&lt;/h2>
@@ -56,7 +59,7 @@ $\theta$.&lt;/p>
 &lt;p>Can we directly treat
 $\theta$ as a regression variable (
 $y$) and use a Gaussian process to obtain
-$\theta|x ~ /mathcal{N}(\mu, K)$. The answer is obviously no. There are two reasons for this: (1) the range of
+$\theta|x \sim\mathcal{N}(\mu, K)$. The answer is obviously no. There are two reasons for this: (1) the range of
 $\theta$ obtained from the Gaussian process is
 $(-\infty,\infty)$, which does not satisfy the requirement that
 $\theta\in[0,1]$, and (2) although we want to estimate
@@ -100,7 +103,7 @@ $f$. So &lt;strong>how do we remove this dependence?&lt;/strong>&lt;/p>
 $\{X,y\}$, the prediction distribution for a new input
 $x^*$ can be expressed as:
 $$
-\pi(x^*)=p(y^*=1|X,y,x^*)=\int\sigma(f^*)\underbrace{p(f^*|X,y,x^*)}_{The predictive distributio no latent variable f^* }\,df^*\,\,\,\,\,\,\,\,(1)
+\pi(x^*)=p(y^*=1|X,y,x^*)=\int\sigma(f^*)p(f^*|X,y,x^*)\,df^*\,\,\,\,\,\,\,\,(1)
 $$
 $$
 p(f^*|X,y,x^*)=\int p(f^*|X,x^*,f)p(f|X,y)\,df\,\,\,\,\,\,\,\,\,\,\,\,(2)
@@ -123,10 +126,10 @@ $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
-\begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$ $\Rightarrow h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, then we can get the approximate of desired integral} \end{split}
+\begin{split} &amp;\text{Firstly, we define $h(x)=\log(g(x))$}\\ &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &amp;\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &amp;\text{we know $g(x)$ will be maximum at $x_0$\\ and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &amp;\Rightarrow\int_a^bg(x)\,dx\approx \exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &amp;\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)$, \\ then we can get the approximate of desired integral} \end{split}
 $$
 &lt;/p>
-&lt;h3 id="42-posterior-distribution-hahahugoshortcodes77hbhb">4.2 Posterior distribution
+&lt;h3 id="42-posterior-distribution-hahahugoshortcodes78hbhb">4.2 Posterior distribution
 $p(f|X,y)$&lt;/h3>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
