@@ -51,10 +51,8 @@ From the above definition, it is clear that any number of random variables form 
 |:--:| 
 |*cov(x1,x2)=0*|
 |![png](2d_gaussian_cov0.7.png)|
-|:--:| 
 |*cov(x1,x2)=0.7*|
 |![png](2d_gaussian_cov0.95.png)|
-|:--:| 
 |*cov(x1,x2)=0.95*|
 As you can see from the graph above, as the correlation between {{< math >}}$x_1,x_2${{< /math >}} gets larger, the values of {{< math >}}$x_1${{< /math >}} and {{< math >}}$x_2${{< /math >}} that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample, {{< math >}}$x_1${{< /math >}} is always equal to {{< math >}}$x_2${{< /math >}}. 
 
@@ -79,6 +77,7 @@ What if we viewed the two given random variables as given samples in the regress
 Recall from the previous definition of a Gaussian process that **any number of random variables constitutes a Gaussian distribution**. Generally speaking, if we take an infinite number of random variables will form an infinite-dimensional Gaussian distribution (infinite-dimensional vector of means, infinite-dimensional * infinite-dimensional covariance matrix). And further, if we consider each function as a very very long vector (an infinite-dimensional vector), then the two parameters of the infinite-dimensional Gaussian distribution, the mean and the variance, can be represented by two functions. The entire Gaussian process can then be written in the form: {{< math >}}$f(\cdot)\sim\mathcal{N}(m(\cdot), K(\cdot,\cdot))${{< /math >}} where {{< math >}}$m(\cdot)\,\,,K(\cdot,\cdot)${{< /math >}} are called the mean function and covariance function respectively. By definition in this way, we can get ride of the limitation of the discrete case and the mean and covariance matrix can be calculated for any function {{< math >}}$f(x)${{< /math >}}.
 
 From this form, it is possible to view the whole Gaussian process as sampling from a Gaussian distribution defined over functions (functional). Like the finite-dimensional Gaussian distribution, it is uniquely determined by the mean and covariance. Recalling the second approach to solving regression mentioned in the beginning, the Gaussian process does take into account all possible functions. Sampling only from this above form has a very low probability of sampling functions that match the sample points. Therefore, if we wish to obtain functions that match the sample, we need to combine the Gaussian process with given samples. From a Bayesian perspective, it is then possible to think of the Gaussian process as a prior distribution over functions. After combining with the given samples, we get the posterior distribution over functions.
+
 |![png](gaussian_prior.png)|
 |:--:| 
 |*m( . )=0 and K( . , .) is gaussian kernel with alpha=2,beta=0.1*|
@@ -117,7 +116,7 @@ Assume {{< math >}}$Y_1${{< /math >}} is the sample value, {{< math >}}$Y_2${{< 
 {{< math >}}$$P(Y_1(X),Y_2(X))\sim \mathcal{N}(\vec{0},\left(\begin{matrix}K(X_{Y_1},X_{Y_1})+\sigma_y^2I_n&K(X_{Y_1},X_{Y_2})\\K(X_{Y_2},X_{Y_1})&K(X_{Y_2},X_{Y_2})\end{matrix}\right))$${{< /math >}}
 {{< math >}}$P(Y_2|Y_1) = \frac{P(Y_1,Y_2)}{P(Y_1)}${{< /math >}}. Then we have: 
 {{< math >}}$$P(Y_2|Y_1) \sim \mathcal{N}(K(X_{Y_2},X_{Y_1})(K(X_{Y_1},X_{Y_1})+\sigma^2I_n)^{-1}Y_2,$${{< /math >}} 
-{{< math >}}$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))${{< /math >}} 
+{{< math >}}$$K(X_{Y_2},X_{Y_2})-K(X_{Y_2},X_{Y_1})K(X_{Y_1},X_{Y_1})^{-1}K(X_{Y_1},X_{Y_2}))$${{< /math >}} 
 ![png](predictive_distribution.png)
 
 Till now, we can calculate the conditional probability distribution to predict {{< math >}}$Y_2${{< /math >}} given the sample {{< math >}}$Y_1${{< /math >}}. Looking at these two parameters separately, 
