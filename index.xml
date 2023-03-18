@@ -238,7 +238,74 @@ $q$ as:
 $$
 \mathbb{E}_q(f^*|X,y,x^*)=\sum_{i=1}^nk(x^*,x_i)\nabla\log p(y_i|\hat{f}_i)
 $$
-&lt;/p>
+Referring to the second column in the table above, we can see that for a positive sample
+$(y_i=+1), \nabla\log p(y_i|f^i)\ge0$. Similarly, a negative sample will result in
+$\nalba\log p(y_i|f^i)\le0$. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of
+$E_q$. If
+$x^*$ is very similar to a positive sample
+$x_i$ (
+$x_i$ is highly likely to belong to the same class as
+$x_i\Rightarrow k(x^*,x_i)$) will be very large
+$\Rightarrow k(x^*,x_i)\nabla\log p(y_i|f^i)$ will pull
+$E_q$ towards a positive value. Conversely, if it is a negative sample,
+$E_q$ will be pulled towards a negative value. The whole principle is very similar to the support vector machine method (kernel), except that we replace the product of the coefficient and label
+$c_iy_i$ with
+\nabla\log p(y_i|f_i)$.&lt;/p>
+&lt;p>At the same time, we can notice that for a sample
+$(x_i,y_i)$ that is easy to classify or can be well-explained by our model, its likelihood will approach 1,
+$p(y_i|f_i)\to1$ and its logarithmic likelihood approaches 0,
+$\log p(y_i|x_i)\to0$.
+$\Rightarrow k(x^*,x_i)\nabla \log p(y_i|f_i)\to0$, which will not have a significant impact on predicting
+$y^*$. This is also very similar to the non-support vector in support vector machines!&lt;/p>
+&lt;p>To classify
+$x^*$ only, we can directly use the response function to &amp;ldquo;squeeze&amp;rdquo; the
+$E_q$ obtained in Equation (8) into the range
+$[0,1]$ to obtain the probability of
+$y^*=1, \pi^(x^*)=\sigma(E_q(f^*|X,y,x^*))$. Since we are discussing a binary classification problem, we can simply classify as follows:
+$$
+\begin{equation}y^*=\left\{ \begin{array}{ll} 1 &amp; \hat{\pi}(x^*)\ge\frac{1}{2} \\ -1 &amp; \hat{\pi}(x^*)&lt;\frac{1}{2} \\ \end{array} \right. \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(9)\end{equation}
+$$
+Since we only calculated the &amp;lsquo;maximum&amp;rsquo; value of the posterior distribution of
+$f^*$ (in Gaussian distribution, mean=mode=probability peak value), this method is called &amp;lsquo;Maximum a posteriori estimation&amp;rsquo; (MAP) prediction.&lt;/p>
+&lt;p>However, sometimes we need to know how &amp;lsquo;confident&amp;rsquo; our prediction is. (For example, in medical applications, if the confidence value is too low, we reject the result). In such cases, we need to calculate the expectation of
+$\pi(x^*)$ in formula (1):
+$$
+\bar{\pi}(x^*)=\mathbb{E}_q(\pi(x^*)|X,y,x^*)=\int\sigma(f^*)q(f^*|X,y,x^*)\,df^*\,\,\,\,\,\,\,\,(10)
+$$
+Recall that
+$\pi(x^*) = p(y^*=1|x^*)$, where
+$p$ is the parameter of a Bernoulli distribution. Why can the expectation of
+$\pi(x^*)$ reflect the credibility of the result? And what is the difference between it and maximum a posteriori prediction? The blue curve in the following two figures represents the posterior distribution
+$q(f^*|X, y, x^*)$, and the red line represents the maximum a posteriori. In the case of the left figure, the posterior distribution of
+$f^*$ has a large variance. When using simple maximum a posteriori prediction,
+$\hat{\pi}(x^*) \ge 1/2$, and it will be classified as
+$y^*=+1$, but this is a very risky behavior because a considerable portion of
+$f^*$ is distributed in negative values, so
+$\sigma(f^*)\le1/2$ will give
+$y^*=-1$. For this case, Formula (10) considers all possible
+$f^*$ and obtains
+$\pi(x^*)$ that is much smaller than
+$\pi(x^*)$. At this point, we can reject the classification result to avoid serious consequences caused by misclassification. The corresponding situation on the right figure is that
+$\pi(x^*)$ is approximately equal to
+$\pi(x^*)$, and we can confidently use the MAP prediction result.
+|
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img alt="png" srcset="
+/post/gpc/MAP_unreliable_hu741165e8da0d39903653c41891f97888_29766_f65e82e005bf8d2eb11af676095e711a.webp 400w,
+/post/gpc/MAP_unreliable_hu741165e8da0d39903653c41891f97888_29766_769fb01a89830df0b0e430b67747a390.webp 760w,
+/post/gpc/MAP_unreliable_hu741165e8da0d39903653c41891f97888_29766_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+src="https://yyimingucl.github.io/post/gpc/MAP_unreliable_hu741165e8da0d39903653c41891f97888_29766_f65e82e005bf8d2eb11af676095e711a.webp"
+width="760"
+height="342"
+loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+|
+|&lt;em>(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.&lt;/em>|
+From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution,
+$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$, to determine whether to use equation (10). Similarly, due to the existence of
+$\sigma(f^*)$, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of
+$\mathbb{V}_q(f^*|\bm{X},\bm{y},\bm{x}^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/p>
 &lt;!-- ### [❤️ Click here to become a sponsor and help support Wowchemy's future ❤️](https://wowchemy.com/sponsor/)
 As a token of appreciation for sponsoring, you can **unlock [these](https://wowchemy.com/sponsor/) awesome rewards and extra features 🦄✨**
 ## Ecosystem
