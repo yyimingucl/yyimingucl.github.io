@@ -53,6 +53,7 @@ From the above definition, it is clear that any number of random variables form 
 *cov(x1,x2)=0.7*
 ![png](2d_gaussian_cov0.95.png)
 *cov(x1,x2)=0.95*
+
 As you can see from the graph above, as the correlation between {{< math >}}$x_1,x_2${{< /math >}} gets larger, the values of {{< math >}}$x_1${{< /math >}} and {{< math >}}$x_2${{< /math >}} that we sample become more and more similar. (As can be expected, when the correlation is close to 1, no matter how many times we sample, {{< math >}}$x_1${{< /math >}} is always equal to {{< math >}}$x_2${{< /math >}}. 
 
 ### 2. High-dimensional Gaussian distribution
@@ -65,8 +66,9 @@ The two left figures above, same as in 2D case, are sampled values for {{< math 
 What if we fix two random variables and sample again?
 ![png](finite_sample_with_fixed_dim.png)
 What if we viewed the two given random variables as given samples in the regression problem? The graph above can be seen as generating four curves that exactly fit the sample. Using the idea of averaging, we sample many curves and then take the average as our regression curve, but this is costly. Luckily, recalling the previous definition of a Gaussian process, the 20 random variables follow a twenty-dimensional Gaussian distribution, and their conditional probability distribution {{< math >}}$(x_{3:20}|x_1,x_2\sim Gaussian)${{< /math >}} remains a Gaussian distribution according to the properties of the Gaussian distribution.
-![png](error_bar.png)
-*Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)*
+|![png](error_bar.png)| 
+|:--:| 
+|*Variance of each random variable (since the first two variables are already given, they can be seen as constants with a variance of zero. In the mean time, the adjacent variabes have a small variance due to the high correlation with the two variables.)*|
 
 **New Question: The above procedure only discusses the discrete case (integer index dimension), but the actual regression problems are often the continuous case.** It is a straightforward idea to sample many times at infinite points (1000 dimensions, 10000 dimensions, ..., and infinite dimensions) around the given sample to approximate a continuous function. However, this approach is extremely ineffective and impossible in fact.
 
