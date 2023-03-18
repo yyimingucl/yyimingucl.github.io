@@ -39,7 +39,7 @@ In a previous article, we briefly explained the application of Gaussian processe
 
 
 ## 1. Review: Gaussian Process Regression
-A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d${{< /math >}} is assigned a random variable {{< math >}}$f${{< /math >}} and the joint distribution of these variables follows a Gaussian distribution {{< math >}}$f|x\sim/mathcal{N}(\mu,K)${{< /math >}}. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function {{< math >}}$\mu${{< /math >}} and the covariance {{< math >}}$K=k(X,X)${{< /math >}} where k is a parameterized kernel function. For {{< math >}}$\mu${{< /math >}}, we generally set it to 0 (ie. {{< math >}}$\mu(\,\cdot\,)=0${{< /math >}}). Given a set of input values {{< math >}}$X${{< /math >}} and their corresponding noisy observations {{< math >}}$y${{< /math >}}, we want to predict the function value {{< math >}}$f^*${{< /math >}} at the new point {{< math >}}$x^*${{< /math >}}. The joint distribution of the observed values
+A Gaussian process is a stochastic process where any point {{< math >}}$x\in R^d${{< /math >}} is assigned a random variable {{< math >}}$f${{< /math >}} and the joint distribution of these variables follows a Gaussian distribution {{< math >}}$f|x\sim\mathcal{N}(\mu,K)${{< /math >}}. Gaussian process is a prior over functions, whose shape (smoothness, etc.) is defined by the mean function {{< math >}}$\mu${{< /math >}} and the covariance {{< math >}}$K=k(X,X)${{< /math >}} where k is a parameterized kernel function. For {{< math >}}$\mu${{< /math >}}, we generally set it to 0 (ie. {{< math >}}$\mu(\,\cdot\,)=0${{< /math >}}). Given a set of input values {{< math >}}$X${{< /math >}} and their corresponding noisy observations {{< math >}}$y${{< /math >}}, we want to predict the function value {{< math >}}$f^*${{< /math >}} at the new point {{< math >}}$x^*${{< /math >}}. The joint distribution of the observed values
 {{< math >}}$y${{< /math >}} and the predicted value {{< math >}}$f^*${{< /math >}} is a Gaussian distribution, which has the following form:
 {{< math >}}
 $$
@@ -67,7 +67,7 @@ Can we directly treat {{< math >}}$\theta${{< /math >}} as a regression variable
 ![png](response_function.png)
 
 ## 3. Gaussian Process Classification (GPC)
-For distinctions, we denote the regression variable of the Gaussian process as the (latent) variable {{< math >}}$f: f|x \sim /mathcal{N}(\mu, K)${{< /math >}}. With the response function {{< math >}}$\sigma${{< /math >}} introduced in the previous paragraph, we can obtain the likelihood function. For a sample {{< math >}}$(xi, yi)${{< /math >}}, their likelihood is given by: 
+For distinctions, we denote the regression variable of the Gaussian process as the (latent) variable {{< math >}}$f: f|x \sim \mathcal{N}(\mu, K)${{< /math >}}. With the response function {{< math >}}$\sigma${{< /math >}} introduced in the previous paragraph, we can obtain the likelihood function. For a sample {{< math >}}$(xi, yi)${{< /math >}}, their likelihood is given by: 
 {{< math >}}
 $$
 \begin{equation} p(y_i|x_i,f_i)=\left\{ \begin{array}{ll}       \sigma(f_i(x_i)), & y_i=+1 \\       1-\sigma(f_i(x_i)), & y_i=-1 \\ \end{array}  \right.  \end{equation}
@@ -93,7 +93,18 @@ $$
 The idea of Laplacian approximation is simple: approximate an unknown distribution {{< math >}}$p${{< /math >}} using a Gaussian distribution {{< math >}}$q${{< /math >}}. The question is, **how do we determine the parameters {{< math >}}$\mu${{< /math >}} and {{< math >}}$\Sigma${{< /math >}} of the Gaussian distribution {{< math >}}$q${{< /math >}}?** Let's start by introducing Laplace's method briefly. Suppose we know that a function {{< math >}}$g(x)${{< /math >}} attains its maximum at {{< math >}}$x_0${{< /math >}}, and we want to evaluate the integral {{< math >}}$\int_a^b g(x)dx${{< /math >}}.
 {{< math >}}
 $$
-\begin{split} &\text{Firstly, we define $h(x)=\log(g(x))$}\\ &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ &\text{we know $g(x)$ will be maximum at $x_0$}\\ & \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ &\Rightarrow\int_a^bg(x)\,dx\approx\\ &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\& \text{then we can get the approximate of desired integral}  \end{split}
+\begin{split} 
+  &\text{Firstly, we define $h(x)=\log(g(x))$}\\ 
+  &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ 
+  &\text{Take Second order Taylor expansion of $h(x)$ at $x_0$}\\ 
+  &\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ 
+  &\text{we know $g(x)$ will be maximum at $x_0$}\\ 
+  & \text{and $h(x)$ will also be maximum at $x_0$ $\Rightarrow h'(x_0)=0$}\\ 
+  &\Rightarrow\int_a^bg(x)\,dx\approx\\ 
+  &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ 
+  &\Rightarrow \text{we only need to find $x_0$ and compute $h''(x_0)}$\\
+  & \text{then we can get the approximate of desired integral}  
+\end{split}
 $$
 {{< /math >}}
 ### 4.2 Posterior distribution {{< math >}}$p(f|X,y)${{< /math >}}
