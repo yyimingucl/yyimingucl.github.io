@@ -98,12 +98,12 @@ $$
 &\text{Firstly, we define} h(x)=\log(g(x))\\ 
 &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ 
 &\text{Take Second order Taylor expansion of} h(x) \text{at} x_0}\\ 
-&\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h''(x_0)(x-x_0)^2)\,dx\\ 
+&\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h^{''}(x_0)(x-x_0)^2)\,dx\\ 
 &\text{we know} g(x) \text{will be maximum at} x_0\\ 
 &\text{and} h(x) \text{will also be maximum at} x_0 \Rightarrow h'(x_0)=0\\ 
 &\Rightarrow\int_a^bg(x)\,dx\approx\\ 
 &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ 
-&\Rightarrow \text{we only need to find} x_0 \text{and compute} h''(x_0)\\
+&\Rightarrow \text{we only need to find} x_0 \text{and compute} h^{''}(x_0)\\
 &\text{then we can get the approximate of desired integral}  
 \end{align}
 $$
@@ -122,11 +122,10 @@ $$
 \begin{split} \log p(f|X,y)&=\log p(y|f)+\log p(f|X)-\log p(y|X)\\ &\text{take derivative wrt $f$，$\log p(y|X)$ can be viewed as constant}\\ &\propto \log p(y|f)+\log p(f|X)\\ &f|X\sim\mathcal{GP}(\mu(X),K(X,X))\\ &=\log p(y|f) - \frac{1}{2}f^TK^{-1}f-\frac{1}{2}\log|K|-\frac{n}{2}\log2\pi \\ &=\Psi(f)\,\,\,\,\,\,\,\,\,(4) \end{split}
 $$
 {{< /math >}}
-Take derivative of (4) with respect to {{< math >}}$f\Rightarrow${{< /math >}}
-
+Take derivative of (4) with respect to {{< math >}}$f${{< /math >}}:
 {{< math >}}
 $$
-\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
+\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
 $$
 {{< /math >}} 
 {{< math >}}
