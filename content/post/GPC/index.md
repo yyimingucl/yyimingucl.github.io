@@ -91,6 +91,7 @@ $$
 ## 4. Laplacian approximation
 ### 4.1 Introduction
 The idea of Laplacian approximation is simple: approximate an unknown distribution {{< math >}}$p${{< /math >}} using a Gaussian distribution {{< math >}}$q${{< /math >}}. The question is, **how do we determine the parameters {{< math >}}$\mu${{< /math >}} and {{< math >}}$\Sigma${{< /math >}} of the Gaussian distribution {{< math >}}$q${{< /math >}}?** Let's start by introducing Laplace's method briefly. Suppose we know that a function {{< math >}}$g(x)${{< /math >}} attains its maximum at {{< math >}}$x_0${{< /math >}}, and we want to evaluate the integral {{< math >}}$\int_a^b g(x)dx${{< /math >}}.
+
 {{< math >}}
 $$
 \begin{align}
@@ -122,6 +123,7 @@ $$
 $$
 {{< /math >}}
 Take derivative of (4) with respect to {{< math >}}$f\Rightarrow${{< /math >}}
+
 {{< math >}}
 $$
 \nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
