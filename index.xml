@@ -127,14 +127,14 @@ $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.&lt;/p>
 $$
 \begin{align}
-&amp;\text{Firstly, we define} h(x)=\log(g(x))\\
+&amp;\text{Firstly, we define} h(x)=\log(g(x)) \\
 &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\
-&amp;\text{Take Second order Taylor expansion of} h(x) \text{at} x_0}\\
+&amp;\text{Take Second order Taylor expansion of} h(x) \text{at} x_0\\
 &amp;\Rightarrow\int_a^b \exp(h(x_0)+h'(x_0)(x-x_0)+\frac{1}{2}h^{''}(x_0)(x-x_0)^2)\,dx\\
 &amp;\text{we know} g(x) \text{will be maximum at} x_0\\
 &amp;\text{and} h(x) \text{will also be maximum at} x_0 \Rightarrow h'(x_0)=0\\
 &amp;\Rightarrow\int_a^bg(x)\,dx\approx\\
-&amp;\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\
+&amp;\exp(h(x_0))\sqrt{2\pi h^{''}(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h^{''}(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h^{''}(x_0))}\,dx\\
 &amp;\Rightarrow \text{we only need to find} x_0 \text{and compute} h^{''}(x_0)\\
 &amp;\text{then we can get the approximate of desired integral}
 \end{align}
