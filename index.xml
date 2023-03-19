@@ -126,7 +126,7 @@ $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
 $\int_a^b g(x)dx$.
 $$
-\begin{split}
+\begin{align}
 &amp;\text{Firstly, we define} h(x)=\log(g(x))\\
 &amp;\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\
 &amp;\text{Take Second order Taylor expansion of} h(x) \text{at} x_0}\\
@@ -137,7 +137,7 @@ $$
 &amp;\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\
 &amp;\Rightarrow \text{we only need to find} x_0 \text{and compute} h''(x_0)\\
 &amp;\text{then we can get the approximate of desired integral}
-\end{split}
+\end{align}
 $$
 &lt;/p>
 &lt;h3 id="42-posterior-distribution-hahahugoshortcodes78hbhb">4.2 Posterior distribution
@@ -165,7 +165,7 @@ $$
 Take derivative of (4) with respect to
 $f\Rightarrow$
 $$
-&amp;\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
+\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
 $$
 $$
 \nabla\nabla\Psi(f)=\nabla\nabla\log p(y|f)-K^{-1}=-W-K^{-1}\,\,\,\,\,\,\,(6)
@@ -199,14 +199,12 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;tr>
 &lt;td style="text-align:center">&lt;em>Table from [2]. The first row is for the logistic function and the second is for the probit function.&lt;/em>&lt;/td>
 &lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">In the case of
-$f = \hat{f}$, our first-order derivative
-$(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
-$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it.&lt;/td>
-&lt;/tr>
 &lt;/tbody>
 &lt;/table>
+&lt;p>In the case of
+$f = \hat{f}$, our first-order derivative
+$(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))$. However,
+$\nabla \log p(y|\,\cdot\,)$ is nonlinear, and we cannot directly solve it.&lt;/p>
 &lt;p>Here, we can use Newton&amp;rsquo;s method for iteration:
 $$
 \begin{split}
@@ -267,7 +265,7 @@ $$
 \mathbb{E}_q(f^*|X,y,x^*)=\sum_{i=1}^nk(x^*,x_i)\nabla\log p(y_i|\hat{f}_i)
 $$
 Referring to the second column in the table above, we can see that for a positive sample
-$(y_i=+1), \nabla\log p(y_i|f^i)\ge0$. Similarly, a negative sample will result in
+$(y_i=+1), \nabla\log p(y_i|f_i)\ge0$. Similarly, a negative sample will result in
 $\nabla\log p(y_i|f_i)\le0$. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of
 $E_q$. If
 $x^*$ is very similar to a positive sample
@@ -338,14 +336,12 @@ loading="lazy" data-zoomable />&lt;/div>
 &lt;tr>
 &lt;td style="text-align:center">&lt;em>(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.&lt;/em>&lt;/td>
 &lt;/tr>
-&lt;tr>
-&lt;td style="text-align:center">From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution,
-$\mathbb{V}_q(f^*|X,y,x^*)$, to determine whether to use equation (10). Similarly, due to the existence of
-$\sigma(f^*)$, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of
-$\mathbb{V}_q(f^*|X,y,x^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/td>
-&lt;/tr>
 &lt;/tbody>
 &lt;/table>
+&lt;p>From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution,
+$\mathbb{V}_q(f^*|X,y,x^*)$, to determine whether to use equation (10). Similarly, due to the existence of
+$\sigma(f^*)$, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of
+$\mathbb{V}_q(f^*|X,y,x^*)$ and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.&lt;/p>
 &lt;h2 id="5-expectation-propagation---ep">5. Expectation Propagation - EP&lt;/h2>
 &lt;ul>
 &lt;li>In this derivation, the response function
