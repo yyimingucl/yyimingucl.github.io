@@ -98,8 +98,7 @@ $\Sigma$ of the Gaussian distribution
 $q$?</strong> Let&rsquo;s start by introducing Laplace&rsquo;s method briefly. Suppose we know that a function
 $g(x)$ attains its maximum at
 $x_0$, and we want to evaluate the integral
-$\int_a^b g(x)dx$.
-$$
+$\int_a^b g(x)dx$.</p>$$
 \begin{align}
 &\text{Firstly, we define} h(x)=\log(g(x))\\
 &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\
@@ -112,7 +111,7 @@ $$
 &\Rightarrow \text{we only need to find} x_0 \text{and compute} h''(x_0)\\
 &\text{then we can get the approximate of desired integral}
 \end{align}
-$$</p><h3 id=42-posterior-distribution-hahahugoshortcodes78hbhb>4.2 Posterior distribution
+$$<h3 id=42-posterior-distribution-hahahugoshortcodes78hbhb>4.2 Posterior distribution
 $p(f|X,y)$</h3><p>Roughly speaking, under the second-order Taylor approximation,
 $g(x)$ is proportional to
 $\mathcal{N}(x_0, h^{''}(x_0))$. By replacing
@@ -134,8 +133,7 @@ $$
 \begin{split} \log p(f|X,y)&=\log p(y|f)+\log p(f|X)-\log p(y|X)\\ &\text{take derivative wrt $f$，$\log p(y|X)$ can be viewed as constant}\\ &\propto \log p(y|f)+\log p(f|X)\\ &f|X\sim\mathcal{GP}(\mu(X),K(X,X))\\ &=\log p(y|f) - \frac{1}{2}f^TK^{-1}f-\frac{1}{2}\log|K|-\frac{n}{2}\log2\pi \\ &=\Psi(f)\,\,\,\,\,\,\,\,\,(4) \end{split}
 $$
 Take derivative of (4) with respect to
-$f\Rightarrow$
-$$
+$f\Rightarrow$</p><p>$$
 \nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
 $$
 $$
