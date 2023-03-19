@@ -93,7 +93,7 @@ $$
 The idea of Laplacian approximation is simple: approximate an unknown distribution {{< math >}}$p${{< /math >}} using a Gaussian distribution {{< math >}}$q${{< /math >}}. The question is, **how do we determine the parameters {{< math >}}$\mu${{< /math >}} and {{< math >}}$\Sigma${{< /math >}} of the Gaussian distribution {{< math >}}$q${{< /math >}}?** Let's start by introducing Laplace's method briefly. Suppose we know that a function {{< math >}}$g(x)${{< /math >}} attains its maximum at {{< math >}}$x_0${{< /math >}}, and we want to evaluate the integral {{< math >}}$\int_a^b g(x)dx${{< /math >}}.
 {{< math >}}
 $$
-\begin{split} 
+\begin{align}
 &\text{Firstly, we define} h(x)=\log(g(x))\\ 
 &\Rightarrow \int_a^bg(x)\,dx = \int_a^b\exp(h(x))\,dx\\ 
 &\text{Take Second order Taylor expansion of} h(x) \text{at} x_0}\\ 
@@ -104,7 +104,7 @@ $$
 &\exp(h(x_0))\sqrt{2\pi h''(x_0)}\int_a^b\underbrace{\frac{1}{\sqrt{2\pi h''(x_0)}}\exp(\frac{1}{2}h''(x_0)(x-x_0)^2)}_{\mathcal{N}(x_0,h''(x_0))}\,dx\\ 
 &\Rightarrow \text{we only need to find} x_0 \text{and compute} h''(x_0)\\
 &\text{then we can get the approximate of desired integral}  
-\end{split}
+\end{align}
 $$
 {{< /math >}}
 
@@ -124,7 +124,7 @@ $$
 Take derivative of (4) with respect to {{< math >}}$f\Rightarrow${{< /math >}}
 {{< math >}}
 $$
-&\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
+\nabla\Psi(f)=\nabla\log p(y|f)-K^{-1}f}\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,(5)
 $$
 {{< /math >}} 
 {{< math >}}
@@ -136,6 +136,7 @@ where {{< math >}}$W=-\nabla\nabla\log p(y|f)${{< /math >}} It should be noted t
 |![png](derivative_of_sigma.png)|
 |:--:| 
 |*Table from [2]. The first row is for the logistic function and the second is for the probit function.*|
+
 In the case of {{< math >}}$f = \hat{f}${{< /math >}}, our first-order derivative {{< math >}}$(5) = 0 \Rightarrow \hat{f} = K(\nabla \log p(y|\hat{f}))${{< /math >}}. However, {{< math >}}$\nabla \log p(y|\,\cdot\,)${{< /math >}} is nonlinear, and we cannot directly solve it. 
 
 Here, we can use Newton's method for iteration:
@@ -172,7 +173,7 @@ $$
 \mathbb{E}_q(f^*|X,y,x^*)=\sum_{i=1}^nk(x^*,x_i)\nabla\log p(y_i|\hat{f}_i)
 $$
 {{< /math >}}
-Referring to the second column in the table above, we can see that for a positive sample {{< math >}}$(y_i=+1), \nabla\log p(y_i|f^i)\ge0${{< /math >}}. Similarly, a negative sample will result in {{< math >}}$\nabla\log p(y_i|f_i)\le0${{< /math >}}. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of {{< math >}}$E_q${{< /math >}}. If {{< math >}}$x^*${{< /math >}} is very similar to a positive sample {{< math >}}$x_i${{< /math >}} ({{< math >}}$x_i${{< /math >}} is highly likely to belong to the same class as {{< math >}}$x_i\Rightarrow k(x^*,x_i)${{< /math >}}) will be very large {{< math >}}$\Rightarrow k(x^*,x_i)\nabla\log p(y_i|f^i)${{< /math >}} will pull {{< math >}}$E_q${{< /math >}} towards a positive value. Conversely, if it is a negative sample, {{< math >}}$E_q${{< /math >}} will be pulled towards a negative value. The whole principle is very similar to the support vector machine method (kernel), except that we replace the product of the coefficient and label {{< math >}}$c_iy_i${{< /math >}} with {{< math >}}$\nabla\log p(y_i|f_i)${{< /math >}}.
+Referring to the second column in the table above, we can see that for a positive sample {{< math >}}$(y_i=+1), \nabla\log p(y_i|f_i)\ge0${{< /math >}}. Similarly, a negative sample will result in {{< math >}}$\nabla\log p(y_i|f_i)\le0${{< /math >}}. Simply put, when making the final classification, we determine which class y* belongs to based on the sign of {{< math >}}$E_q${{< /math >}}. If {{< math >}}$x^*${{< /math >}} is very similar to a positive sample {{< math >}}$x_i${{< /math >}} ({{< math >}}$x_i${{< /math >}} is highly likely to belong to the same class as {{< math >}}$x_i\Rightarrow k(x^*,x_i)${{< /math >}}) will be very large {{< math >}}$\Rightarrow k(x^*,x_i)\nabla\log p(y_i|f^i)${{< /math >}} will pull {{< math >}}$E_q${{< /math >}} towards a positive value. Conversely, if it is a negative sample, {{< math >}}$E_q${{< /math >}} will be pulled towards a negative value. The whole principle is very similar to the support vector machine method (kernel), except that we replace the product of the coefficient and label {{< math >}}$c_iy_i${{< /math >}} with {{< math >}}$\nabla\log p(y_i|f_i)${{< /math >}}.
 
 At the same time, we can notice that for a sample {{< math >}}$(x_i,y_i)${{< /math >}} that is easy to classify or can be well-explained by our model, its likelihood will approach 1, {{< math >}}$p(y_i|f_i)\to1${{< /math >}} and its logarithmic likelihood approaches 0, {{< math >}}$\log p(y_i|x_i)\to0${{< /math >}}. {{< math >}}$\Rightarrow k(x^*,x_i)\nabla \log p(y_i|f_i)\to0${{< /math >}}, which will not have a significant impact on predicting {{< math >}}$y^*${{< /math >}}. This is also very similar to the non-support vector in support vector machines!
 
@@ -194,6 +195,7 @@ Recall that {{< math >}}$\pi(x^*) = p(y^*=1|x^*)${{< /math >}}, where {{< math >
 |![png](MAP_unreliable.png)|
 |:--:| 
 |*(Left) Unreliable situation of MAP prediction, (Right) Reliable situation of MAP prediction.*|
+
 From the graph, we can see that the variance of the posterior distribution is the key factor that differentiates equation (8) and equation (10). We can calculate the variance of the posterior distribution, {{< math >}}$\mathbb{V}_q(f^*|X,y,x^*)${{< /math >}}, to determine whether to use equation (10). Similarly, due to the existence of {{< math >}}$\sigma(f^*)${{< /math >}}, equation (10) also needs to be approximated or calculated using sampling methods. The calculation of {{< math >}}$\mathbb{V}_q(f^*|X,y,x^*)${{< /math >}} and the computation of equation (10) are both detailed in [2] 3.4.2, so we will not go into further detail here.
 
 ## 5. Expectation Propagation - EP
